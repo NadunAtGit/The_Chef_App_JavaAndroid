@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#BEBEBE"/> <!-- Ash color (light gray) -->
+    <corners android:radius="1000dp"/> <!-- Large radius to make it circular -->
+    <stroke
+        android:width="2dp"
+        android:color="#808080"/> <!-- Optional darker gray border -->
+</shape>

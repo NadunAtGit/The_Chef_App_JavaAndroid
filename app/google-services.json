@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "735695526448",
+    "project_id": "thechef-95495",
+    "storage_bucket": "thechef-95495.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735695526448:android:b87e2a9f3dab828439abf5",
+        "android_client_info": {
+          "package_name": "com.example.thechef"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRA99vt7PMzfDGREeDyJY8yQEznMQ0bRU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

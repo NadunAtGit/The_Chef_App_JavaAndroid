@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white"/> <!-- Background color of the input field -->
+    <stroke android:width="2dp" android:color="@color/ash"/> <!-- Border settings -->
+    <corners android:radius="8dp"/> <!-- Border radius -->
+</shape>
+
+
+
