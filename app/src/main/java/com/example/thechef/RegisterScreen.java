@@ -34,10 +34,15 @@ public class RegisterScreen extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        // Initialize FirebaseAuth instance
+        mAuth = FirebaseAuth.getInstance();
+
+        // Check if a user is currently signed in
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            startActivity(new Intent(RegisterScreen .this,LoginScreen.class));
+
+        if (currentUser != null) {
+            // If there is a logged-in user, redirect to MainActivity
+            startActivity(new Intent(RegisterScreen.this, MainActivity.class));
             finish();
         }
     }

@@ -20,10 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterFoodList;
     private RecyclerView recyclerViewRecipe;
+    private ArrayList<RecipeDomain> items = new ArrayList<>();  // Store recipes here
     ImageView profile, addrecipe;
 
     @Override
@@ -48,50 +51,52 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        initRecyclerView();
-        fetchRecipeDataFromFirebase();  // Fetch and log the recipe data from Firebase
+        initRecyclerView();  // Initialize RecyclerView
+        fetchRecipeDataFromFirebase();  // Fetch data from Firebase
     }
 
-//    private void initRecyclerView() {
-//        ArrayList<RecipeDomain> items = new ArrayList<>();
-//        // Predefined recipes, just for placeholder purposes
-//        items.add(new RecipeDomain("Fish Curry", "Cut the fish into large chunks...", "fishcurry", "Steps here..."));
-//        items.add(new RecipeDomain("Meat Curry", "", "tunacurry", "", 25, 3.5));
-//        items.add(new RecipeDomain("Egg Curry", "", "fast_1", "", 40, 2.0));
-//
-//        recyclerViewRecipe = findViewById(R.id.view1);
-//        recyclerViewRecipe.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-//
-//        adapterFoodList = new FoodListAdapter(items);
-//        recyclerViewRecipe.setAdapter(adapterFoodList);
-//    }
+    // Initialize RecyclerView without predefined items
+    private void initRecyclerView() {
+        recyclerViewRecipe = findViewById(R.id.view1);
+        recyclerViewRecipe.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        // Initially pass an empty list to the adapter
+        adapterFoodList = new FoodListAdapter(items);
+        recyclerViewRecipe.setAdapter(adapterFoodList);
+    }
 
     private void fetchRecipeDataFromFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference recipeRef = database.getReference("recipes");
 
-        recipeRef.child("R-0001").addValueEventListener(new ValueEventListener() {
+        recipeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Extract individual fields
-                    String description = dataSnapshot.child("description").getValue(String.class);
-                    String foodName = dataSnapshot.child("foodName").getValue(String.class);
-                    String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
+                items.clear();  // Clear previous items
 
-                    // Log the basic fields
-                    Log.d("FirebaseData", "Description: " + description);
-                    Log.d("FirebaseData", "Food Name: " + foodName);
-                    Log.d("FirebaseData", "Image URL: " + imageUrl);
+                // Iterate over all recipes in Firebase
+                for (DataSnapshot recipeSnapshot : dataSnapshot.getChildren()) {
+                    String foodName = recipeSnapshot.child("foodName").getValue(String.class);
+                    String description = recipeSnapshot.child("description").getValue(String.class);
+                    String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
+                    String time = recipeSnapshot.child("time").getValue(String.class);
+                    Double score = recipeSnapshot.child("score").getValue(Double.class);
 
-                    // Extract and log the ingredients dynamically
-                    DataSnapshot ingredientsSnapshot = dataSnapshot.child("ingredients");
-                    for (DataSnapshot ingredientSnapshot : ingredientsSnapshot.getChildren()) {
+                    // Retrieve ingredients as a Map (key: ingredient name, value: quantity)
+                    Map<String, String> ingredients = new HashMap<>();
+                    for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
                         String ingredientName = ingredientSnapshot.getKey();
                         String quantity = ingredientSnapshot.getValue(String.class);
-                        Log.d("FirebaseData", ingredientName + ": " + quantity);
+                        ingredients.put(ingredientName, quantity);
                     }
+
+                    // Add each recipe to the items list
+                    RecipeDomain recipe = new RecipeDomain(foodName, description, imageUrl, time, score, ingredients);
+                    items.add(recipe);
                 }
+
+                // Notify the adapter that the data has changed so it can refresh the view
+                adapterFoodList.notifyDataSetChanged();
             }
 
             @Override
@@ -101,3 +106,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+

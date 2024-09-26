@@ -2,78 +2,48 @@ package com.example.thechef.Domain;
 
 import java.io.Serializable;
 
-public class RecipeDomain implements Serializable {
-    private String title;
-    private String description;
-    private String picurl;
-    private String ingredients;
-//    private String steps;
-    private int time;
-    private double score;
+import java.util.Map;
 
-    public RecipeDomain(String title, String description, String picurl, String ingredients, String steps, int time, double score) {
-        this.title = title;
+public class RecipeDomain {
+    private String foodName;
+    private String description;
+    private String imageUrl;
+    private String time;
+    private Double score;
+    private Map<String, String> ingredients; // Store ingredients as key-value pairs
+
+    public RecipeDomain(String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients) {
+        this.foodName = foodName;
         this.description = description;
-        this.picurl = picurl;
-        this.ingredients = ingredients;
-//        this.steps = steps;
+        this.imageUrl = imageUrl;
         this.time = time;
         this.score = score;
+        this.ingredients = ingredients;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    // Getters and setters...
+    public String getFoodName() {
+        return foodName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public String getPicurl() {
-        return picurl;
-    }
-
-    public void setPicurl(String picurl) {
-        this.picurl = picurl;
-    }
-
-    public String getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(String ingredients) {
-        this.ingredients = ingredients;
-    }
-
-//    public String getSteps() {
-//        return steps;
-//    }
-//
-//    public void setSteps(String steps) {
-//        this.steps = steps;
-//    }
-//
-    public int getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public double getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public Map<String, String> getIngredients() {
+        return ingredients;
     }
 }
+

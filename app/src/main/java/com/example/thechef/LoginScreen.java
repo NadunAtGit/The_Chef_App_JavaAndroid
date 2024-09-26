@@ -55,7 +55,7 @@ public class LoginScreen extends AppCompatActivity {
         th.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);  // Show progress bar
+                 // Show progress bar
 
                 String emailV = email.getText().toString().trim();
                 String passwordV = password.getText().toString().trim();
@@ -76,7 +76,8 @@ public class LoginScreen extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);  // Hide progress bar
+
+                                progressBar.setVisibility(View.VISIBLE); // Hide progress bar
                                 if (task.isSuccessful()) {
                                     // Sign-in success
                                     Toast.makeText(LoginScreen.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();

@@ -38,16 +38,19 @@ Context context;
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.titleTxt.setText(items.get(position).getTitle());
+        // Set title, time, and score
+        holder.titleTxt.setText(items.get(position).getFoodName());
         holder.timeTxt.setText(items.get(position).getTime() + " min");
-        holder.scoreTxt.setText(""+items.get(position).getScore());
-        int drawableResourceId=holder.itemView.getResources().getIdentifier(items.get(position).getPicurl(),"drawable",holder.itemView.getContext().getPackageName());
+        holder.scoreTxt.setText(String.valueOf(items.get(position).getScore()));
 
+        // Load image from URL using Glide
+        String imageUrl = items.get(position).getImageUrl();
         Glide.with(holder.itemView.getContext())
-                .load(drawableResourceId)
-                .transform(new GranularRoundedCorners(25,25,0,0))
+                .load(imageUrl)  // Load from imageUrl instead of drawable
+                .transform(new GranularRoundedCorners(25, 25, 0, 0))  // Rounded corners as per original code
                 .into(holder.pic);
 
+        // Handle click events
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,14 +58,16 @@ Context context;
 
                 if (currentPosition != RecyclerView.NO_POSITION) {  // Check if position is valid
                     Intent intent = new Intent(holder.itemView.getContext(), DetailActivity.class);
-                    intent.putExtra("object", items.get(currentPosition));  // Use currentPosition instead of position
+
+                    // Pass the RecipeDomain object as a Serializable
+                    intent.putExtra("object", (CharSequence) items.get(currentPosition));  // Pass the object
                     holder.itemView.getContext().startActivity(intent);
                 }
             }
         });
 
-
     }
+
 
     @Override
     public int getItemCount() {
