@@ -112,7 +112,7 @@
         android:id="@+id/button3"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="124dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/button_square_shape"
         android:backgroundTint="@android:color/holo_blue_light"
@@ -123,18 +123,17 @@
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/google_signup"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="212dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="124dp"
         android:background="@drawable/button_square_shape"
         android:backgroundTint="@android:color/holo_blue_light"
         android:gravity="center"
         android:textAlignment="center"
         app:icon="@drawable/google"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button3"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <LinearLayout
@@ -204,7 +203,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10"
-        app:layout_constraintVertical_bias="0.352" />
+        app:layout_constraintVertical_bias="0.338" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

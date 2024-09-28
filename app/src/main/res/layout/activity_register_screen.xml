@@ -247,7 +247,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/google_signup"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="220dp"

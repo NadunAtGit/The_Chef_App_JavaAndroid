@@ -39,7 +39,10 @@ public class LoginScreen extends AppCompatActivity {
         // Initialize UI components
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        progressBar = findViewById(R.id.progressBar);  // Make sure you have a progress bar in your layout
+        progressBar = findViewById(R.id.progressBar);
+
+        // Initially hide the progress bar
+        progressBar.setVisibility(View.GONE);
 
         // Navigate to RegisterScreen when "su" is clicked
         TextView su = findViewById(R.id.signup);
@@ -55,7 +58,8 @@ public class LoginScreen extends AppCompatActivity {
         th.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 // Show progress bar
+                // Show progress bar when login button is pressed
+                progressBar.setVisibility(View.VISIBLE);
 
                 String emailV = email.getText().toString().trim();
                 String passwordV = password.getText().toString().trim();
@@ -76,8 +80,6 @@ public class LoginScreen extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-
-                                progressBar.setVisibility(View.VISIBLE); // Hide progress bar
                                 if (task.isSuccessful()) {
                                     // Sign-in success
                                     Toast.makeText(LoginScreen.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
@@ -88,9 +90,13 @@ public class LoginScreen extends AppCompatActivity {
                                     Toast.makeText(LoginScreen.this, "Authentication failed: " + task.getException().getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
+
+                                // Hide progress bar after authentication is done
+                                progressBar.setVisibility(View.GONE);
                             }
                         });
             }
         });
     }
 }
+

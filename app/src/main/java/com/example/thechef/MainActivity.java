@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Iterate over all recipes in Firebase
                 for (DataSnapshot recipeSnapshot : dataSnapshot.getChildren()) {
+                    String recipeId = recipeSnapshot.getKey();  // Get the recipe ID (document key)
                     String foodName = recipeSnapshot.child("foodName").getValue(String.class);
                     String description = recipeSnapshot.child("description").getValue(String.class);
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
@@ -90,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
                         ingredients.put(ingredientName, quantity);
                     }
 
-                    // Add each recipe to the items list
-                    RecipeDomain recipe = new RecipeDomain(foodName, description, imageUrl, time, score, ingredients);
+                    // Add each recipe to the items list with recipeId
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ingredients);
                     items.add(recipe);
                 }
 
@@ -105,5 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }
 

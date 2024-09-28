@@ -36,23 +36,30 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void getBundle() {
-        // Check if RecipeDomain object is passed via intent
-        RecipeDomain object = (RecipeDomain) getIntent().getSerializableExtra("object");
+        // Retrieve the RecipeDomain object
+        RecipeDomain object = (RecipeDomain) getIntent().getSerializableExtra("object");  // Correct cast to RecipeDomain
 
         if (object != null) {
-            // Display data from intent
-            displayRecipeDetails(object.getFoodName(), object.getDescription(), object.getImageUrl(),
-                    object.getTime(), object.getScore(), object.getIngredients());
-        } else {
-            // If object is null, fetch data from Firebase using recipeId
-            recipeId = getIntent().getStringExtra("recipeId");
-            if (recipeId != null && !recipeId.isEmpty()) {
-                fetchRecipeDataFromFirebase(recipeId);
-            } else {
-                Log.e("DetailActivity", "No recipe data available from intent or Firebase.");
+            // Display the object data
+            titleTxt.setText(object.getFoodName());
+            timeTxt.setText(object.getTime() + " min");
+            scoreTxt.setText(String.valueOf(object.getScore()));
+            descriptionTxt.setText(object.getDescription());
+
+            // Load image using Glide
+            Glide.with(this)
+                    .load(object.getImageUrl())
+                    .into(picFood);
+
+            // Optionally, display ingredients
+            StringBuilder ingredientsText = new StringBuilder();
+            for (Map.Entry<String, String> entry : object.getIngredients().entrySet()) {
+                ingredientsText.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
+            ingredientsTxt.setText(ingredientsText.toString());
         }
     }
+
 
     // Fetch recipe data from Firebase if no object is passed via intent
     private void fetchRecipeDataFromFirebase(String recipeId) {
@@ -118,8 +125,8 @@ public class DetailActivity extends AppCompatActivity {
         timeTxt = findViewById(R.id.timeTxt);
         scoreTxt = findViewById(R.id.scoreTxt);
         descriptionTxt = findViewById(R.id.descriptionTxt);
-        ingredientsTxt = findViewById(R.id.ingredientsTxt);
-        stepsTxt = findViewById(R.id.stepsTxt);  // Add steps if needed
+//        ingredientsTxt = findViewById(R.id.ingredientsTxt);
+////        stepsTxt = findViewById(R.id.stepsTxt);  // Add steps if needed
         picFood = findViewById(R.id.picFood);
     }
 }

@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import java.util.Map;
 
-public class RecipeDomain {
+public class RecipeDomain implements Serializable{
+    private String recipeId;
     private String foodName;
     private String description;
     private String imageUrl;
@@ -12,13 +13,22 @@ public class RecipeDomain {
     private Double score;
     private Map<String, String> ingredients; // Store ingredients as key-value pairs
 
-    public RecipeDomain(String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients) {
+    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients) {
+        this.recipeId = recipeId;
         this.foodName = foodName;
         this.description = description;
         this.imageUrl = imageUrl;
         this.time = time;
         this.score = score;
         this.ingredients = ingredients;
+    }
+
+    public String getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
     }
 
     // Getters and setters...

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.example.thechef.Activity.DetailActivity;
+import com.example.thechef.DescriptionActivity;
 import com.example.thechef.Domain.RecipeDomain;
 import com.example.thechef.R;
 
@@ -54,17 +55,19 @@ Context context;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int currentPosition = holder.getAdapterPosition();  // Always get the updated adapter position
+                int currentPosition = holder.getAdapterPosition();
 
-                if (currentPosition != RecyclerView.NO_POSITION) {  // Check if position is valid
-                    Intent intent = new Intent(holder.itemView.getContext(), DetailActivity.class);
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    Intent intent = new Intent(holder.itemView.getContext(), DescriptionActivity.class);
 
-                    // Pass the RecipeDomain object as a Serializable
-                    intent.putExtra("object", (CharSequence) items.get(currentPosition));  // Pass the object
+                    // Pass the recipe ID to the new activity
+                    intent.putExtra("recipeId", items.get(currentPosition).getRecipeId());
+
                     holder.itemView.getContext().startActivity(intent);
                 }
             }
         });
+
 
     }
 
