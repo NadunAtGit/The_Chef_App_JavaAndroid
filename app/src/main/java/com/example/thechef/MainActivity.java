@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewRecipe.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         // Initially pass an empty list to the adapter
-        adapterFoodList = new FoodListAdapter(items);
+        adapterFoodList = new FoodListAdapter(items,this);
         recyclerViewRecipe.setAdapter(adapterFoodList);
     }
 
@@ -82,17 +82,21 @@ public class MainActivity extends AppCompatActivity {
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
+                    int RatingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
+                    String steps = recipeSnapshot.child("steps").getValue(String.class); // Fetching the steps
 
                     // Retrieve ingredients as a Map (key: ingredient name, value: quantity)
                     Map<String, String> ingredients = new HashMap<>();
                     for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
                         String ingredientName = ingredientSnapshot.getKey();
                         String quantity = ingredientSnapshot.getValue(String.class);
-                        ingredients.put(ingredientName, quantity);
+                        if (ingredientName != null && quantity != null) {  // Check for null values
+                            ingredients.put(ingredientName, quantity);
+                        }
                     }
 
                     // Add each recipe to the items list with recipeId
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ingredients);
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score,RatingCount, ingredients, steps);
                     items.add(recipe);
                 }
 
@@ -106,6 +110,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }
-

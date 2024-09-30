@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.thechef.Domain.RecipeDomain;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -22,14 +23,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import java.util.Locale;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AddRecipe extends AppCompatActivity {
 
-    private EditText foodNameField, descriptionField,Time;
+    private EditText foodNameField, descriptionField, Time, Steps;
     private LinearLayout ingredientsContainer;
     private Button addFieldButton, submitButton, addImageButton;
 
@@ -53,12 +54,13 @@ public class AddRecipe extends AppCompatActivity {
 
         // Initialize views
         foodNameField = findViewById(R.id.name);
+        Steps = findViewById(R.id.steps);
         descriptionField = findViewById(R.id.description);
         ingredientsContainer = findViewById(R.id.ingredients_container);
         addFieldButton = findViewById(R.id.addField);
         submitButton = findViewById(R.id.submit);
         addImageButton = findViewById(R.id.addImage);
-        Time=findViewById(R.id.time);
+        Time = findViewById(R.id.time);
 
         // Add dynamic fields for ingredients
         addFieldButton.setOnClickListener(v -> addNewField());
@@ -109,8 +111,6 @@ public class AddRecipe extends AppCompatActivity {
         // Create a reference for the image file in Firebase Storage
         String fileName = foodNameField.getText().toString().trim().replaceAll("\\s+", "_") + "_" + System.currentTimeMillis() + ".jpg";
         StorageReference fileRef = storageReference.child("recipes/" + fileName);
-        double scr=0;
-
 
         // Start the upload
         fileRef.putFile(uri)
@@ -128,12 +128,31 @@ public class AddRecipe extends AppCompatActivity {
     private void uploadRecipeWithCustomID(String imageUrl) {
         String foodName = foodNameField.getText().toString().trim();
         String description = descriptionField.getText().toString().trim();
-        String time1=Time.getText().toString().trim();
-        Double score=0.0;
+        String time1 = Time.getText().toString().trim();
+        String steps = Steps.getText().toString().trim(); // Capture steps here
+        Double score = 0.0;
+        int ratingCount=0;
 
         if (foodName.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, "Please enter food name and description.", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        // Initialize ingredients map
+        Map<String, String> ingredientsMap = new HashMap<>();
+
+        // Retrieve ingredient data from dynamically added fields
+        for (int i = 0; i < ingredientsContainer.getChildCount(); i++) {
+            View ingredientView = ingredientsContainer.getChildAt(i);
+            EditText ingredientField = ingredientView.findViewById(R.id.ingredient_name);
+            EditText quantityField = ingredientView.findViewById(R.id.ingredient_quantity);
+
+            String ingredientName = ingredientField.getText().toString().trim();
+            String quantity = quantityField.getText().toString().trim();
+
+            if (!ingredientName.isEmpty() && !quantity.isEmpty()) {
+                ingredientsMap.put(ingredientName, quantity);
+            }
         }
 
         // Retrieve the last recipe ID and generate the next custom ID
@@ -150,22 +169,7 @@ public class AddRecipe extends AppCompatActivity {
                 String newId = generateNextId(lastId);
 
                 // Create a RecipeClass object
-                RecipeClass recipe = new RecipeClass(foodName, description,time1,score);
-
-                // Capture each ingredient and quantity from the dynamically added fields
-                for (int i = 0; i < ingredientsContainer.getChildCount(); i++) {
-                    View ingredientView = ingredientsContainer.getChildAt(i);
-
-                    EditText ingredientField = ingredientView.findViewById(R.id.ingredient_name);
-                    EditText quantityField = ingredientView.findViewById(R.id.ingredient_quantity);
-
-                    String ingredientName = ingredientField.getText().toString().trim();
-                    String quantity = quantityField.getText().toString().trim();
-
-                    if (!ingredientName.isEmpty() && !quantity.isEmpty()) {
-                        recipe.addIngredient(ingredientName, quantity);
-                    }
-                }
+                RecipeDomain recipe = new RecipeDomain(newId, foodName, description, imageUrl, time1, score,ratingCount ,ingredientsMap, steps); // Pass steps as a single string
 
                 // Prepare the recipe map
                 Map<String, Object> recipeMap = new HashMap<>();
@@ -174,13 +178,9 @@ public class AddRecipe extends AppCompatActivity {
                 recipeMap.put("time", recipe.getTime());
                 recipeMap.put("score", recipe.getScore());
                 recipeMap.put("imageUrl", imageUrl); // Include the image URL here
-
-                // Convert list of ingredients to a map
-                Map<String, String> ingredientsMap = new HashMap<>();
-                for (Ingredient ingredient : recipe.getIngredients()) {
-                    ingredientsMap.put(ingredient.getIngredientName(), ingredient.getQuantity());
-                }
-                recipeMap.put("ingredients", ingredientsMap);
+                recipeMap.put("steps", steps); // Add steps to the map
+                recipeMap.put("RatingCount", ratingCount);
+                recipeMap.put("ingredients", ingredientsMap); // Add ingredients to the map
 
                 // Push to Firebase using custom ID
                 recipeRef.child(newId).setValue(recipeMap)
@@ -194,7 +194,6 @@ public class AddRecipe extends AppCompatActivity {
             }
         });
     }
-
 
     // Helper method to generate the next ID in the format R-0001, R-0002, etc.
     private String generateNextId(String lastId) {

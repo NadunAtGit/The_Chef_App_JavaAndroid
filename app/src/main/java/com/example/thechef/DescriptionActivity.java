@@ -19,10 +19,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class DescriptionActivity extends AppCompatActivity {
 
-    private TextView foodNameTxt, foodDescriptionTxt;
-    private ConstraintLayout ingredientsContainer; // Changed from LinearLayout to ConstraintLayout
+    private TextView foodNameTxt, foodDescriptionTxt, stepsTxt; // Added steps TextView
+    private ConstraintLayout ingredientsContainer;
     private ImageView foodImage;
-    private String recipeId; // Assuming you will pass the recipe ID from the Intent
+    private String recipeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +32,13 @@ public class DescriptionActivity extends AppCompatActivity {
         // Initialize TextViews
         foodNameTxt = findViewById(R.id.foodName);
         foodDescriptionTxt = findViewById(R.id.foodDescription);
-        ingredientsContainer = findViewById(R.id.ingredientsContainer); // Initialize the ConstraintLayout
-        foodImage = findViewById(R.id.foodImage); // Initialize the ImageView
+        stepsTxt = findViewById(R.id.Steps); // Initialize the steps TextView
+        ingredientsContainer = findViewById(R.id.ingredientsContainer);
+        foodImage = findViewById(R.id.foodImage);
 
-        // Get the recipe ID passed via Intent
         recipeId = getIntent().getStringExtra("recipeId");
 
         if (recipeId != null) {
-            // Fetch the food details from Firebase using the recipe ID
             fetchRecipeDataFromFirebase(recipeId);
         }
     }
@@ -52,14 +51,16 @@ public class DescriptionActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Get the food name, description, image URL, and ingredients
+                    // Get the food name, description, image URL, ingredients, and steps
                     String foodName = dataSnapshot.child("foodName").getValue(String.class);
                     String description = dataSnapshot.child("description").getValue(String.class);
                     String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
+                    String steps = dataSnapshot.child("steps").getValue(String.class); // Fetching steps
 
                     // Set the text in the TextViews
                     foodNameTxt.setText(foodName);
                     foodDescriptionTxt.setText(description);
+                    stepsTxt.setText(steps); // Setting the steps text
 
                     // Load the image using Glide
                     Glide.with(DescriptionActivity.this)
@@ -72,7 +73,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     ingredientsContainer.removeAllViews();
 
                     // Initialize previous ingredient view height for positioning
-                    int previousViewId = View.generateViewId(); // Track the ID of the previous ingredient TextView
+                    int previousViewId = View.generateViewId();
                     for (DataSnapshot ingredientSnapshot : dataSnapshot.child("ingredients").getChildren()) {
                         String ingredientName = ingredientSnapshot.getKey();
                         String ingredientQuantity = ingredientSnapshot.getValue(String.class);
@@ -80,7 +81,7 @@ public class DescriptionActivity extends AppCompatActivity {
                         // Create a new TextView for each ingredient
                         TextView ingredientTextView = new TextView(DescriptionActivity.this);
                         ingredientTextView.setText(ingredientName + ": " + ingredientQuantity);
-                        ingredientTextView.setTextSize(16); // Set text size
+                        ingredientTextView.setTextSize(16);
 
                         // Set the ID for the new TextView
                         ingredientTextView.setId(View.generateViewId());
