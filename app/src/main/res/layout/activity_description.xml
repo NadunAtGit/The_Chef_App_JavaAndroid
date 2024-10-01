@@ -72,20 +72,23 @@
         app:layout_constraintTop_toBottomOf="@id/textView23" />
 
     <!-- Image Section -->
-    <ImageView
-        android:id="@+id/foodImage"
-        android:layout_width="181dp"
-        android:layout_height="156dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/catogery_backround"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/foodDescription"
-        app:srcCompat="@drawable/addimg" />
 
-    <!-- Steps Section -->
-    <TextView
+        <!-- Steps Section -->
+
+        <ImageView
+            android:id="@+id/foodImage"
+            android:layout_width="181dp"
+            android:layout_height="156dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/catogery_backround"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.069"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/foodDescription"
+            app:srcCompat="@drawable/addimg" />
+
+        <TextView
         android:id="@+id/textViewSteps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

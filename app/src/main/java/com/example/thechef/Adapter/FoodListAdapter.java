@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
+import com.example.thechef.Activity.DetailActivity;
 import com.example.thechef.DescriptionActivity;
 import com.example.thechef.Domain.RecipeDomain;
+import com.example.thechef.MainActivity;
 import com.example.thechef.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -92,8 +94,14 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
         submitButton.setOnClickListener(v -> {
             float newRating = ratingBar.getRating();
             updateScoreInFirebase(recipeId, newRating);
-            dialog.dismiss();
+            dialog.dismiss(); // Close the dialog first
+
+            // Start MainActivity after the dialog is dismissed
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         });
+
 
         dialog.show();  // Display dialog
     }

@@ -23,19 +23,42 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterFoodList;
     private RecyclerView recyclerViewRecipe;
     private ArrayList<RecipeDomain> items = new ArrayList<>();  // Store recipes here
     ImageView profile, addrecipe;
+    EditText searchbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         profile = findViewById(R.id.profile);
         addrecipe = findViewById(R.id.addrecipe);
+        searchbar = findViewById(R.id.searchbar);
+
+        searchbar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    String query = searchbar.getText().toString();
+                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                    intent.putExtra("search_query", query);
+                    startActivity(intent);
+                }
+            }
+        });
+
 
         addrecipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewRecipe.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         // Initially pass an empty list to the adapter
-        adapterFoodList = new FoodListAdapter(items,this);
+        adapterFoodList = new FoodListAdapter(items, this);
         recyclerViewRecipe.setAdapter(adapterFoodList);
     }
 
@@ -96,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // Add each recipe to the items list with recipeId
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score,RatingCount, ingredients, steps);
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, RatingCount, ingredients, steps);
                     items.add(recipe);
                 }
 
@@ -110,4 +133,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected void onResume() {
+        super.onResume();
+        // Clear focus from the search bar to prevent cursor from blinking
+        searchbar.clearFocus();
+
+    }
+
 }

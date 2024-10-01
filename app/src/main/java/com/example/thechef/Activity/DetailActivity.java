@@ -45,6 +45,7 @@ public class DetailActivity extends AppCompatActivity {
             timeTxt.setText(object.getTime() + " min");
             scoreTxt.setText(String.valueOf(object.getScore()));
             descriptionTxt.setText(object.getDescription());
+            stepsTxt.setText(object.getSteps());
 
             // Load image using Glide
             Glide.with(this)
@@ -74,6 +75,7 @@ public class DetailActivity extends AppCompatActivity {
                 String description = dataSnapshot.child("description").getValue(String.class);
                 String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
                 String time = dataSnapshot.child("time").getValue(String.class);
+                String steps = dataSnapshot.child("steps").getValue(String.class);
                 Double score = dataSnapshot.child("score").getValue(Double.class);
 
                 // Retrieve ingredients as a Map
@@ -85,7 +87,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
 
                 // Display data in the UI
-                displayRecipeDetails(foodName, description, imageUrl, time, score, ingredients);
+                displayRecipeDetails(foodName, description, imageUrl, time, score, ingredients,steps);
             }
 
             @Override
@@ -96,7 +98,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     // Display recipe details on the UI
-    private void displayRecipeDetails(String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients) {
+    private void displayRecipeDetails(String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients,String steps) {
         // Load image using Glide
         Glide.with(this)
                 .load(imageUrl)
@@ -107,6 +109,7 @@ public class DetailActivity extends AppCompatActivity {
         timeTxt.setText(time + " min");
         scoreTxt.setText(String.valueOf(score));
         descriptionTxt.setText(description);
+        stepsTxt.setText(steps);
 
         // Format ingredients for display
         StringBuilder ingredientsText = new StringBuilder();
@@ -125,8 +128,8 @@ public class DetailActivity extends AppCompatActivity {
         timeTxt = findViewById(R.id.timeTxt);
         scoreTxt = findViewById(R.id.scoreTxt);
         descriptionTxt = findViewById(R.id.descriptionTxt);
-//        ingredientsTxt = findViewById(R.id.ingredientsTxt);
-////        stepsTxt = findViewById(R.id.stepsTxt);  // Add steps if needed
+        ingredientsTxt = findViewById(R.id.ingredientsTxt);
+        stepsTxt = findViewById(R.id.stepsTxt);
         picFood = findViewById(R.id.picFood);
     }
 }
