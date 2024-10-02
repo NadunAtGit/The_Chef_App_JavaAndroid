@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterFoodList;
+    private ConstraintLayout pizza;
     private RecyclerView recyclerViewRecipe;
     private ArrayList<RecipeDomain> items = new ArrayList<>();  // Store recipes here
     ImageView profile, addrecipe,saved;
@@ -44,9 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         profile = findViewById(R.id.profile);
+        pizza=findViewById(R.id.PizzaButton);
         saved=findViewById(R.id.saved);
         addrecipe = findViewById(R.id.addrecipe);
         searchbar = findViewById(R.id.searchbar);
+
+
+
 
         searchbar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -67,6 +74,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddRecipe.class));
             }
         });
+
+        pizza.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, PizzaActivity.class));
+            }
+        });
+
+
+
+
+
+
 
         saved.setOnClickListener(new View.OnClickListener() {
             @Override
