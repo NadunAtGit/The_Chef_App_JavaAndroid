@@ -10,13 +10,13 @@
 
     <string-array name="categories">
         <item>Pizza</item>
-        <item>Pasta</item>
-        <item>Rice</item>
-        <item>Snack</item>
-        <item>Juice</item>
+        <item>Mains</item>
+        <item>Salads</item>
         <item>Soup</item>
+        <item>Drinks</item>
+        <item>Desserts</item>
         <item>Curry</item>
-        <item>Dessert</item>
+        <item>Snacks</item>
     </string-array>
 
 

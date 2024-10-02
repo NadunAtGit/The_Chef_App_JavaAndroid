@@ -1,5 +1,6 @@
 package com.example.thechef;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,6 +30,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private Button save;
     private String recipeId;
     private DatabaseReference savedRecipesRef;
+    private FloatingActionButton backButton;
     private FirebaseAuth mAuth; // For user authentication
 
     @Override
@@ -45,8 +48,15 @@ public class DescriptionActivity extends AppCompatActivity {
         stepsTxt = findViewById(R.id.Steps);
         ingredientsContainer = findViewById(R.id.ingredientsContainer);
         foodImage = findViewById(R.id.foodImage);
-
+        backButton=findViewById(R.id.backButton);
         recipeId = getIntent().getStringExtra("recipeId");
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DescriptionActivity.this, MainActivity.class));
+            }
+        });
 
         // Firebase database reference for SavedRecipes
         savedRecipesRef = FirebaseDatabase.getInstance().getReference("SavedRecipes");

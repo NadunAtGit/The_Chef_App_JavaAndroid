@@ -276,19 +276,26 @@
                     android:text="Cut the fish into large chunks and mix it well with all the marinade ingredients in a medium-sized bowl, then set it aside for an hour to marinate. In a medium saucepan, heat some oil over medium heat and sauté onion, garlic, curry leaves, chili, and fenugreek until softened. Next, add cinnamon, coconut milk, turmeric, chili powder, salt, and pepper, bringing the mixture to a boil. Once boiling, add the well-marinated fish along with tomato or goraka, and let it simmer on low heat until the fish is cooked and the curry thickens. Finally, stir in Dijon mustard, adjust the seasoning, and serve the curry hot with rice."
                     android:textAlignment="viewStart"
                     android:textColor="@color/light_black"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView19"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:layout_editor_absoluteY="220dp"></LinearLayout>
 
                 <Button
                     android:id="@+id/save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="116dp"
-                    android:text="Button"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Submit"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/Steps" />
 
