@@ -127,9 +127,9 @@ public class DetailActivity extends AppCompatActivity {
         titleTxt = findViewById(R.id.titleTxt);
         timeTxt = findViewById(R.id.timeTxt);
         scoreTxt = findViewById(R.id.scoreTxt);
-        descriptionTxt = findViewById(R.id.descriptionTxt);
-        ingredientsTxt = findViewById(R.id.ingredientsTxt);
-        stepsTxt = findViewById(R.id.stepsTxt);
-        picFood = findViewById(R.id.picFood);
+//        descriptionTxt = findViewById(R.id.descriptionTxt);
+//        ingredientsTxt = findViewById(R.id.ingredientsTxt);
+//        stepsTxt = findViewById(R.id.stepsTxt);
+        picFood = findViewById(R.id.foodImage);
     }
 }

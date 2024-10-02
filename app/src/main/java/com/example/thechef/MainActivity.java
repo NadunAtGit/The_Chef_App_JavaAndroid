@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterFoodList;
     private RecyclerView recyclerViewRecipe;
     private ArrayList<RecipeDomain> items = new ArrayList<>();  // Store recipes here
-    ImageView profile, addrecipe;
+    ImageView profile, addrecipe,saved;
     EditText searchbar;
 
     @Override
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         profile = findViewById(R.id.profile);
+        saved=findViewById(R.id.saved);
         addrecipe = findViewById(R.id.addrecipe);
         searchbar = findViewById(R.id.searchbar);
 
@@ -64,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, AddRecipe.class));
+            }
+        });
+
+        saved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SavedActivity.class));
             }
         });
 
@@ -107,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
                     int RatingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
                     String steps = recipeSnapshot.child("steps").getValue(String.class); // Fetching the steps
+                    String category = recipeSnapshot.child("category").getValue(String.class);
 
                     // Retrieve ingredients as a Map (key: ingredient name, value: quantity)
                     Map<String, String> ingredients = new HashMap<>();
@@ -119,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // Add each recipe to the items list with recipeId
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, RatingCount, ingredients, steps);
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, RatingCount, ingredients, steps,category);
                     items.add(recipe);
                 }
 

@@ -44,7 +44,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/picFood"
+                    android:id="@+id/foodImage"
                     android:layout_width="0dp"
                     android:layout_height="280dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -59,10 +59,10 @@
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/picFood">
+                    app:layout_constraintTop_toBottomOf="@+id/foodImage">
 
                     <TextView
-                        android:id="@+id/titleTxt"
+                        android:id="@+id/foodName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -176,7 +176,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/descriptionTxt"
+                    android:id="@+id/foodDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -197,34 +197,42 @@
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
+                    android:layout_marginTop="30dp"
                     android:fontFamily="@font/poppins"
                     android:orientation="horizontal"
                     android:text="Ingredients"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/ingredientsContainer"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/descriptionTxt" />
+                    app:layout_constraintTop_toBottomOf="@+id/foodDescription"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"></LinearLayout>
 
-                <TextView
-                    android:id="@+id/ingredientsTxt"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ingredientsContainer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="3 tbsp Oil Coconut, olive, canola 1 sprig Curry leaves 2 tbsp Garlic Sliced 1 Red onion Sliced 1 tsp Fenugreek 2 Green chillies Sliced 2 Pieces Cinnamon sticks 200 ml Coconut milk 1 tsp Dijon Mustard 1/2 tsp Turmeric 1/2 tsp Chilli powder 1 Tomato or ( 3 goraka) Salt and pepper to taste "
-                    android:textAlignment="gravity"
-                    android:textColor="@color/light_black"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="96dp"
+                    android:layout_marginEnd="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
+                    app:layout_constraintTop_toBottomOf="@id/foodDescription">
+
+                    <!-- You can add your content here, for example: -->
+                    <!-- Example TextView inside the ConstraintLayout -->
+
+                    <!-- Add more views as needed -->
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -235,7 +243,7 @@
                     android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="56dp"
                     android:fontFamily="@font/poppins"
                     android:orientation="horizontal"
                     android:text="How to make"
@@ -243,8 +251,9 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ingredientsTxt" />
+                    app:layout_constraintTop_toBottomOf="@+id/ingredientsContainer" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -255,17 +264,31 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/stepsTxt"
+                    android:id="@+id/Steps"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Cut the fish into large chunks and mix it well with all the marinade ingredients in a medium-sized bowl, then set it aside for an hour to marinate. In a medium saucepan, heat some oil over medium heat and sauté onion, garlic, curry leaves, chili, and fenugreek until softened. Next, add cinnamon, coconut milk, turmeric, chili powder, salt, and pepper, bringing the mixture to a boil. Once boiling, add the well-marinated fish along with tomato or goraka, and let it simmer on low heat until the fish is cooked and the curry thickens. Finally, stir in Dijon mustard, adjust the seasoning, and serve the curry hot with rice."
                     android:textAlignment="viewStart"
                     android:textColor="@color/light_black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView19"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+                    app:layout_constraintTop_toBottomOf="@+id/Steps" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

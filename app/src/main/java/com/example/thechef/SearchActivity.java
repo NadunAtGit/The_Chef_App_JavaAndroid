@@ -89,6 +89,7 @@ public class SearchActivity extends AppCompatActivity {
                         Double score = recipeSnapshot.child("score").getValue(Double.class);
                         int ratingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
                         String steps = recipeSnapshot.child("steps").getValue(String.class);
+                        String category = recipeSnapshot.child("category").getValue(String.class);
 
                         // Retrieve ingredients as a Map (key: ingredient name, value: quantity)
                         Map<String, String> ingredients = new HashMap<>();
@@ -101,7 +102,7 @@ public class SearchActivity extends AppCompatActivity {
                         }
 
                         // Add each recipe to the list
-                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps);
+                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps,category);
                         recipeList.add(recipe);
                     }
                 }

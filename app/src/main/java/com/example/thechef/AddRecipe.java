@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,6 +34,7 @@ public class AddRecipe extends AppCompatActivity {
     private EditText foodNameField, descriptionField, Time, Steps;
     private LinearLayout ingredientsContainer;
     private Button addFieldButton, submitButton, addImageButton;
+    private Spinner categorySpinner; // Add spinner for category selection
 
     private int fieldCounter = 1;  // To track the number of ingredient fields
     private FirebaseDatabase database;
@@ -61,6 +63,7 @@ public class AddRecipe extends AppCompatActivity {
         submitButton = findViewById(R.id.submit);
         addImageButton = findViewById(R.id.addImage);
         Time = findViewById(R.id.time);
+        categorySpinner = findViewById(R.id.categorySpinner); // Initialize category spinner
 
         // Add dynamic fields for ingredients
         addFieldButton.setOnClickListener(v -> addNewField());
@@ -130,6 +133,7 @@ public class AddRecipe extends AppCompatActivity {
         String description = descriptionField.getText().toString().trim();
         String time1 = Time.getText().toString().trim();
         String steps = Steps.getText().toString().trim(); // Capture steps here
+        String selectedCategory = categorySpinner.getSelectedItem().toString(); // Get selected category
         Double score = 0.0;
         int ratingCount=0;
 
@@ -168,8 +172,8 @@ public class AddRecipe extends AppCompatActivity {
                 }
                 String newId = generateNextId(lastId);
 
-                // Create a RecipeClass object
-                RecipeDomain recipe = new RecipeDomain(newId, foodName, description, imageUrl, time1, score,ratingCount ,ingredientsMap, steps); // Pass steps as a single string
+                // Create a RecipeClass object including the category
+                RecipeDomain recipe = new RecipeDomain(newId, foodName, description, imageUrl, time1, score, ratingCount, ingredientsMap, steps, selectedCategory); // Include selectedCategory
 
                 // Prepare the recipe map
                 Map<String, Object> recipeMap = new HashMap<>();
@@ -181,6 +185,7 @@ public class AddRecipe extends AppCompatActivity {
                 recipeMap.put("steps", steps); // Add steps to the map
                 recipeMap.put("RatingCount", ratingCount);
                 recipeMap.put("ingredients", ingredientsMap); // Add ingredients to the map
+                recipeMap.put("category", selectedCategory); // Add selected category to the map
 
                 // Push to Firebase using custom ID
                 recipeRef.child(newId).setValue(recipeMap)
@@ -198,14 +203,10 @@ public class AddRecipe extends AppCompatActivity {
     // Helper method to generate the next ID in the format R-0001, R-0002, etc.
     private String generateNextId(String lastId) {
         if (lastId.isEmpty()) {
-            return "R-0001";  // Start with R-0001 if no ID exists
+            return "R-0001"; // Starting ID
         }
-
-        // Extract the numeric part of the last ID and increment it
-        int lastNumericId = Integer.parseInt(lastId.substring(2));  // Skip the "R-"
-        int newNumericId = lastNumericId + 1;
-
-        // Return the new ID in the format R-xxxx (e.g., R-0002)
-        return String.format(Locale.getDefault(), "R-%04d", newNumericId);
+        String[] parts = lastId.split("-");
+        int nextId = Integer.parseInt(parts[1]) + 1;
+        return String.format(Locale.getDefault(), "R-%04d", nextId);
     }
 }

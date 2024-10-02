@@ -13,17 +13,20 @@ public class RecipeDomain implements Serializable {
     private int ratingCount; // Added field to store the number of ratings
     private Map<String, String> ingredients; // Store ingredients as key-value pairs
     private String steps; // Changed from List<String> to String
+    private String category; // New attribute for category
 
-    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, int ratingCount, Map<String, String> ingredients, String steps) {
+    // Updated constructor to include the new category attribute
+    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, int ratingCount, Map<String, String> ingredients, String steps, String category) {
         this.recipeId = recipeId;
         this.foodName = foodName;
         this.description = description;
         this.imageUrl = imageUrl;
         this.time = time;
         this.score = score;
-        this.ratingCount = ratingCount; // Initialize ratingCount
+        this.ratingCount = ratingCount;
         this.ingredients = ingredients;
-        this.steps = steps; // Updated constructor
+        this.steps = steps;
+        this.category = category; // Initialize category
     }
 
     // Getters and Setters
@@ -75,11 +78,11 @@ public class RecipeDomain implements Serializable {
         this.score = score;
     }
 
-    public int getRatingCount() { // Getter for ratingCount
+    public int getRatingCount() {
         return ratingCount;
     }
 
-    public void setRatingCount(int ratingCount) { // Setter for ratingCount
+    public void setRatingCount(int ratingCount) {
         this.ratingCount = ratingCount;
     }
 
@@ -92,10 +95,18 @@ public class RecipeDomain implements Serializable {
     }
 
     public String getSteps() {
-        return steps; // Getter for steps
+        return steps;
     }
 
     public void setSteps(String steps) {
-        this.steps = steps; // Setter for steps
+        this.steps = steps;
+    }
+
+    public String getCategory() { // Getter for category
+        return category;
+    }
+
+    public void setCategory(String category) { // Setter for category
+        this.category = category;
     }
 }
