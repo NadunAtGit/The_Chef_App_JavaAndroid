@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/imgview"
-        tools:context=".AddRecipe">
+        tools:context=".UpdateActivity">
 
         <!-- Existing layout content goes here -->
         <ImageView
@@ -26,6 +26,7 @@
             app:srcCompat="@drawable/addimg" />
 
         <View
+            android:id="@+id/foodImage"
             android:layout_width="412dp"
             android:layout_height="220dp"
             android:alpha="0.8"
@@ -39,7 +40,7 @@
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Recipe"
+            android:text="Edit Recipe"
             android:textColor="@color/light_black"
             android:textSize="34sp"
             android:textStyle="bold"
@@ -70,7 +71,6 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/catogery_backround"
             android:ems="10"
-            android:hint="Enter Name"
             android:inputType="text"
             android:paddingStart="20dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -230,7 +230,6 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/inputbg"
 
-            android:hint="Enter food description here"
             android:inputType="textMultiLine"
             android:minLines="5"
             android:padding="10dp"
@@ -251,7 +250,6 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/inputbg"
             android:ems="10"
-            android:hint="Enter steps here"
             android:inputType="textMultiLine"
             android:minLines="5"
             android:padding="10dp"
@@ -268,7 +266,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="28dp"
             android:layout_marginEnd="20dp"
-            android:text="Submit"
+            android:layout_marginBottom="20dp"
+            android:text="Update"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -296,7 +296,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/inputbg"
-            android:hint="Enter ingredients here, separated by commas"
             android:inputType="textMultiLine"
             android:minLines="3"
             android:padding="10dp"

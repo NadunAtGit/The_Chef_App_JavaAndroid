@@ -52,15 +52,10 @@ public class DetailActivity extends AppCompatActivity {
                     .load(object.getImageUrl())
                     .into(picFood);
 
-            // Optionally, display ingredients
-            StringBuilder ingredientsText = new StringBuilder();
-            for (Map.Entry<String, String> entry : object.getIngredients().entrySet()) {
-                ingredientsText.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-            }
-            ingredientsTxt.setText(ingredientsText.toString());
+            // Set ingredients directly from the String
+            ingredientsTxt.setText(object.getIngredients());
         }
     }
-
 
     // Fetch recipe data from Firebase if no object is passed via intent
     private void fetchRecipeDataFromFirebase(String recipeId) {
@@ -78,16 +73,11 @@ public class DetailActivity extends AppCompatActivity {
                 String steps = dataSnapshot.child("steps").getValue(String.class);
                 Double score = dataSnapshot.child("score").getValue(Double.class);
 
-                // Retrieve ingredients as a Map
-                Map<String, String> ingredients = new HashMap<>();
-                for (DataSnapshot ingredientSnapshot : dataSnapshot.child("ingredients").getChildren()) {
-                    String ingredientName = ingredientSnapshot.getKey();
-                    String quantity = ingredientSnapshot.getValue(String.class);
-                    ingredients.put(ingredientName, quantity);
-                }
+                // Retrieve ingredients directly as a String
+                String ingredients = dataSnapshot.child("ingredients").getValue(String.class);
 
                 // Display data in the UI
-                displayRecipeDetails(foodName, description, imageUrl, time, score, ingredients,steps);
+                displayRecipeDetails(foodName, description, imageUrl, time, score, ingredients, steps);
             }
 
             @Override
@@ -98,7 +88,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     // Display recipe details on the UI
-    private void displayRecipeDetails(String foodName, String description, String imageUrl, String time, Double score, Map<String, String> ingredients,String steps) {
+    private void displayRecipeDetails(String foodName, String description, String imageUrl, String time, Double score, String ingredients, String steps) {
         // Load image using Glide
         Glide.with(this)
                 .load(imageUrl)
@@ -111,15 +101,8 @@ public class DetailActivity extends AppCompatActivity {
         descriptionTxt.setText(description);
         stepsTxt.setText(steps);
 
-        // Format ingredients for display
-        StringBuilder ingredientsText = new StringBuilder();
-        for (Map.Entry<String, String> entry : ingredients.entrySet()) {
-            ingredientsText.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-        }
-        ingredientsTxt.setText(ingredientsText.toString());
-
-        // Optionally, set steps or other details
-        // stepsTxt.setText(...); // If steps are available
+        // Set ingredients directly
+        ingredientsTxt.setText(ingredients);
     }
 
     // Initialize the views from the layout

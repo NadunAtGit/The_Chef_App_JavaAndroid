@@ -80,22 +80,17 @@ public class SavedActivity extends AppCompatActivity {
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
-                    int ratingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
+                    int ratingCount = recipeSnapshot.child("RatingCount").getValue(Integer.class);
                     String steps = recipeSnapshot.child("steps").getValue(String.class);
                     String category = recipeSnapshot.child("category").getValue(String.class);
+                    String ingredients = recipeSnapshot.child("ingredients").getValue(String.class);
+                    String userId = recipeSnapshot.child("userId").getValue(String.class);
 
-                    // Retrieve ingredients as a Map
-                    Map<String, String> ingredients = new HashMap<>();
-                    for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
-                        String ingredientName = ingredientSnapshot.getKey();
-                        String quantity = ingredientSnapshot.getValue(String.class);
-                        if (ingredientName != null && quantity != null) {
-                            ingredients.put(ingredientName, quantity);
-                        }
-                    }
+                    // Concatenate ingredients into a single string
 
-                    // Create RecipeDomain object and add to list
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps,category);
+
+                    // Create RecipeDomain object with the concatenated ingredients
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category,userId);
                     savedRecipesList.add(recipe);
 
                     // Update adapter with the saved recipes
@@ -110,4 +105,5 @@ public class SavedActivity extends AppCompatActivity {
             }
         });
     }
+
 }

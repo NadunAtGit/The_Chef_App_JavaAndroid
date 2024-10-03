@@ -6,10 +6,12 @@ import android.text.TextWatcher;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.thechef.Adapter.SearchResultsAdapter;
 import com.example.thechef.Domain.RecipeDomain;
 import com.google.firebase.database.DataSnapshot;
@@ -89,20 +91,15 @@ public class SearchActivity extends AppCompatActivity {
                         Double score = recipeSnapshot.child("score").getValue(Double.class);
                         int ratingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
                         String steps = recipeSnapshot.child("steps").getValue(String.class);
+                        String ingredients = recipeSnapshot.child("ingredients").getValue(String.class);
                         String category = recipeSnapshot.child("category").getValue(String.class);
+                        String userID=recipeSnapshot.child("userId").getValue(String.class);
 
                         // Retrieve ingredients as a Map (key: ingredient name, value: quantity)
-                        Map<String, String> ingredients = new HashMap<>();
-                        for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
-                            String ingredientName = ingredientSnapshot.getKey();
-                            String quantity = ingredientSnapshot.getValue(String.class);
-                            if (ingredientName != null && quantity != null) {
-                                ingredients.put(ingredientName, quantity);
-                            }
-                        }
+
 
                         // Add each recipe to the list
-                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps,category);
+                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category,userID);
                         recipeList.add(recipe);
                     }
                 }

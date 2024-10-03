@@ -54,7 +54,8 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
         // Set title, time, and score
         holder.titleTxt.setText(currentRecipe.getFoodName());
         holder.timeTxt.setText(currentRecipe.getTime() + " min");
-        holder.scoreTxt.setText(String.valueOf(currentRecipe.getScore()));
+        holder.scoreTxt.setText(String.format("%.1f", currentRecipe.getScore()));
+
 
         // Load image from URL using Glide
         Glide.with(holder.itemView.getContext())
@@ -77,6 +78,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     }
 
     // Show rating dialog
+    // Show rating dialog
     private void showRatingDialog(String recipeId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);  // Use initialized context
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -93,7 +95,12 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
         // Submit button click listener
         submitButton.setOnClickListener(v -> {
             float newRating = ratingBar.getRating();
-            updateScoreInFirebase(recipeId, newRating);
+
+            // Round the rating to nearest 0.5
+            float roundedRating = roundToNearestHalf(newRating);
+
+            // Update score in Firebase
+            updateScoreInFirebase(recipeId, roundedRating);
             dialog.dismiss(); // Close the dialog first
 
             // Start MainActivity after the dialog is dismissed
@@ -102,11 +109,17 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
             context.startActivity(intent);
         });
 
-
         dialog.show();  // Display dialog
     }
 
+    // Method to round rating to nearest 0.5
+    private float roundToNearestHalf(float rating) {
+        return Math.round(rating * 2) / 2.0f;
+    }
+
+
     // Update the recipe's score in Firebase
+// Update the recipe's score in Firebase
     private void updateScoreInFirebase(String recipeId, float newRating) {
         DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("recipes").child(recipeId);
 
@@ -125,6 +138,9 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
                     // Calculate new average score
                     float newAverage = ((currentScore * ratingCount) + newRating) / (ratingCount + 1);
 
+                    // Round the new average to nearest 0.5 and display only one decimal place
+                    newAverage = roundToNearestHalf(newAverage);
+
                     // Update score and increment rating count
                     recipeRef.child("score").setValue(newAverage);
                     recipeRef.child("ratingCount").setValue(ratingCount + 1);
@@ -138,6 +154,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

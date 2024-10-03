@@ -15,14 +15,15 @@ import com.bumptech.glide.Glide;
 import com.example.thechef.Domain.RecipeDomain;
 import com.example.thechef.R;
 import com.example.thechef.DescriptionActivity;
+import com.example.thechef.UpdateActivity;
 
 import java.util.ArrayList;
 
-public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
+public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder> {
     private ArrayList<RecipeDomain> recipeList;
     private Context context;
 
-    public SearchResultsAdapter(ArrayList<RecipeDomain> recipeList, Context context) {
+    public MyListAdapter(ArrayList<RecipeDomain> recipeList, Context context) {
         this.recipeList = recipeList;
         this.context = context;
     }
@@ -30,8 +31,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout for each recipe in the search results
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe_card, parent, false);
+        // Inflate the item layout for each recipe in the list
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_recipe_card, parent, false);
         return new ViewHolder(view);
     }
 
@@ -46,14 +47,19 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         // Set recipe details
         holder.textRecipeName.setText(recipe.getFoodName());
-        holder.textDescription.setText(String.format("%.1f", recipe.getScore()));
-
         holder.textTime.setText(recipe.getTime() + " min");
+        holder.textScore.setText(String.format("%.1f", recipe.getScore())); // Display score as text
 
         // Set click listener to navigate to DescriptionActivity when item is clicked
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DescriptionActivity.class);
             intent.putExtra("recipeId", recipe.getRecipeId()); // Pass the recipe ID to the next activity
+            context.startActivity(intent);
+        });
+
+        holder.editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, UpdateActivity.class);
+            intent.putExtra("recipeId", recipe.getRecipeId()); // Pass the recipe ID to the UpdateActivity
             context.startActivity(intent);
         });
     }
@@ -64,17 +70,18 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageRecipe; // ImageView for recipe image
+        ImageView imageRecipe,editButton; // ImageView for recipe image
         TextView textRecipeName; // TextView for recipe name
-        TextView textDescription; // TextView for recipe score
         TextView textTime; // TextView for preparation time
+        TextView textScore; // TextView for recipe score
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageRecipe = itemView.findViewById(R.id.imageRecipe);
+            editButton=itemView.findViewById(R.id.editRecipe);
             textRecipeName = itemView.findViewById(R.id.textRecipeName);
-            textDescription = itemView.findViewById(R.id.textScore);
             textTime = itemView.findViewById(R.id.textTime);
+            textScore = itemView.findViewById(R.id.textScore); // Ensure this matches the layout
         }
     }
 }

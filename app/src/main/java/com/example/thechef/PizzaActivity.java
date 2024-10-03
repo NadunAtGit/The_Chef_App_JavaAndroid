@@ -16,8 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PizzaActivity extends AppCompatActivity {
 
@@ -31,7 +29,7 @@ public class PizzaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pizza);
 
         // Initialize RecyclerView
-        recyclerView = findViewById(R.id.recyclepizza);
+        recyclerView = findViewById(R.id.recycleMyCollection);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Fetch Pizza recipes from Firebase
@@ -56,23 +54,16 @@ public class PizzaActivity extends AppCompatActivity {
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
-                    int ratingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
-                    String steps = recipeSnapshot.child("steps").getValue(String.class);
+                    int ratingCount = recipeSnapshot.child("RatingCount").getValue(Integer.class); // Changed to Integer.class
+                    String ingredients = recipeSnapshot.child("ingredients").getValue(String.class); // Now a single string
+                    String steps = recipeSnapshot.child("steps").getValue(String.class); // Now a single string
                     String category = recipeSnapshot.child("category").getValue(String.class);
-
-                    Map<String, String> ingredients = new HashMap<>();
-                    for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
-                        String ingredientName = ingredientSnapshot.getKey();
-                        String quantity = ingredientSnapshot.getValue(String.class);
-                        if (ingredientName != null && quantity != null) {
-                            ingredients.put(ingredientName, quantity);
-                        }
-                    }
+                    String userId = recipeSnapshot.child("userId").getValue(String.class); // New field for userId
 
                     // Ensure category is "Pizza"
                     if ("Pizza".equalsIgnoreCase(category)) {
                         // Add each pizza recipe to the list
-                        RecipeDomain pizzaRecipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category);
+                        RecipeDomain pizzaRecipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category, userId);
                         pizzaRecipeList.add(pizzaRecipe);
                     }
                 }

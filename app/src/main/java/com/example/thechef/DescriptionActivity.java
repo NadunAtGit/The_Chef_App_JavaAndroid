@@ -48,7 +48,7 @@ public class DescriptionActivity extends AppCompatActivity {
         stepsTxt = findViewById(R.id.Steps);
         ingredientsContainer = findViewById(R.id.ingredientsContainer);
         foodImage = findViewById(R.id.foodImage);
-        backButton=findViewById(R.id.backButton);
+        backButton = findViewById(R.id.backButton);
         recipeId = getIntent().getStringExtra("recipeId");
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +68,7 @@ public class DescriptionActivity extends AppCompatActivity {
         // Set click listener for the save button
         save.setOnClickListener(v -> saveRecipe(recipeId));
     }
+
     private void fetchRecipeDataFromFirebase(String recipeId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference recipeRef = database.getReference("recipes").child(recipeId);
@@ -82,13 +83,21 @@ public class DescriptionActivity extends AppCompatActivity {
                     String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
                     String steps = dataSnapshot.child("steps").getValue(String.class);
                     String time = dataSnapshot.child("time").getValue(String.class);
-                    long ratingCount = dataSnapshot.child("ratingCount").getValue(Long.class);
-                    long score = dataSnapshot.child("score").getValue(Long.class);
+                    String ingredients = dataSnapshot.child("ingredients").getValue(String.class); // Retrieve ingredients as is
 
                     // Set the text in the TextViews
                     foodNameTxt.setText(foodName);
                     foodDescriptionTxt.setText(description);
                     stepsTxt.setText(steps);
+
+                    // Display the ingredients exactly as stored in Firebase
+                    TextView ingredientsTextView = new TextView(DescriptionActivity.this);
+                    ingredientsTextView.setText(ingredients);  // Show ingredients without formatting
+                    ingredientsTextView.setTextSize(16);       // Adjust the text size if necessary
+
+                    // Clear existing views and add the ingredientsTextView
+                    ingredientsContainer.removeAllViews();
+                    ingredientsContainer.addView(ingredientsTextView);
 
                     // Load the image using Glide
                     Glide.with(DescriptionActivity.this)
@@ -96,23 +105,6 @@ public class DescriptionActivity extends AppCompatActivity {
                             .placeholder(android.R.drawable.ic_menu_gallery)
                             .error(android.R.drawable.ic_delete)
                             .into(foodImage);
-
-                    // Clear existing views in the ingredients container
-                    ingredientsContainer.removeAllViews();
-
-                    // Dynamically populate the ingredients
-                    for (DataSnapshot ingredientSnapshot : dataSnapshot.child("ingredients").getChildren()) {
-                        String ingredientName = ingredientSnapshot.getKey();
-                        String ingredientQuantity = ingredientSnapshot.getValue(String.class);
-
-                        // Create a new TextView for each ingredient
-                        TextView ingredientTextView = new TextView(DescriptionActivity.this);
-                        ingredientTextView.setText(ingredientName + ": " + ingredientQuantity);
-                        ingredientTextView.setTextSize(16);
-
-                        // Add the TextView to the ConstraintLayout
-                        ingredientsContainer.addView(ingredientTextView);
-                    }
                 }
             }
 
@@ -124,8 +116,6 @@ public class DescriptionActivity extends AppCompatActivity {
     }
 
 
-    // Save recipe method
-    // Save recipe method
     // Save recipe method
     private void saveRecipe(String recipeId) {
         String userId = mAuth.getCurrentUser().getUid(); // Get current user's ID
@@ -142,6 +132,4 @@ public class DescriptionActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

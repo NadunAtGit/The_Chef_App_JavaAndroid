@@ -73,7 +73,7 @@ public class RegisterScreen extends AppCompatActivity {
         // Initialize UI elements
         TextView su = findViewById(R.id.signup);
         Button th = findViewById(R.id.toHome);
-        name = findViewById(R.id.name);
+        name = findViewById(R.id.editName);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         confirm_password = findViewById(R.id.con_password);

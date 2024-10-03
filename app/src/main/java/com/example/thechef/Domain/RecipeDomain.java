@@ -1,7 +1,6 @@
 package com.example.thechef.Domain;
 
 import java.io.Serializable;
-import java.util.Map;
 
 public class RecipeDomain implements Serializable {
     private String recipeId;
@@ -11,12 +10,13 @@ public class RecipeDomain implements Serializable {
     private String time;
     private Double score;
     private int ratingCount; // Added field to store the number of ratings
-    private Map<String, String> ingredients; // Store ingredients as key-value pairs
+    private String ingredients; // Changed from Map<String, String> to String
     private String steps; // Changed from List<String> to String
     private String category; // New attribute for category
+    private String userId; // New attribute for user ID
 
-    // Updated constructor to include the new category attribute
-    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, int ratingCount, Map<String, String> ingredients, String steps, String category) {
+    // Updated constructor to include the new userId attribute
+    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, int ratingCount, String ingredients, String steps, String category, String userId) {
         this.recipeId = recipeId;
         this.foodName = foodName;
         this.description = description;
@@ -24,9 +24,10 @@ public class RecipeDomain implements Serializable {
         this.time = time;
         this.score = score;
         this.ratingCount = ratingCount;
-        this.ingredients = ingredients;
+        this.ingredients = ingredients; // Initialize ingredients as a single string
         this.steps = steps;
         this.category = category; // Initialize category
+        this.userId = userId; // Initialize user ID
     }
 
     // Getters and Setters
@@ -86,11 +87,11 @@ public class RecipeDomain implements Serializable {
         this.ratingCount = ratingCount;
     }
 
-    public Map<String, String> getIngredients() {
+    public String getIngredients() { // Getter for ingredients
         return ingredients;
     }
 
-    public void setIngredients(Map<String, String> ingredients) {
+    public void setIngredients(String ingredients) { // Setter for ingredients
         this.ingredients = ingredients;
     }
 
@@ -108,5 +109,13 @@ public class RecipeDomain implements Serializable {
 
     public void setCategory(String category) { // Setter for category
         this.category = category;
+    }
+
+    public String getUserId() { // Getter for userId
+        return userId;
+    }
+
+    public void setUserId(String userId) { // Setter for userId
+        this.userId = userId;
     }
 }

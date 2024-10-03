@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -17,13 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.thechef.Domain.RecipeDomain;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.auth.FirebaseAuth; // Import FirebaseAuth to get current user ID
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -31,17 +29,16 @@ import java.util.Map;
 
 public class AddRecipe extends AppCompatActivity {
 
-    private EditText foodNameField, descriptionField, Time, Steps;
-    private LinearLayout ingredientsContainer;
-    private Button addFieldButton, submitButton, addImageButton;
+    private EditText foodNameField, descriptionField, Time, Steps, ingredientsField; // Changed ingredientsContainer to a single EditText
+    private Button submitButton, addImageButton;
     private Spinner categorySpinner; // Add spinner for category selection
 
-    private int fieldCounter = 1;  // To track the number of ingredient fields
     private FirebaseDatabase database;
     private DatabaseReference recipeRef;
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private Uri imageUri = null;
+    private FirebaseAuth mAuth; // FirebaseAuth instance to get current user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +50,17 @@ public class AddRecipe extends AppCompatActivity {
         recipeRef = database.getReference("recipes");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        mAuth = FirebaseAuth.getInstance(); // Initialize FirebaseAuth
 
         // Initialize views
-        foodNameField = findViewById(R.id.name);
-        Steps = findViewById(R.id.steps);
-        descriptionField = findViewById(R.id.description);
-        ingredientsContainer = findViewById(R.id.ingredients_container);
-        addFieldButton = findViewById(R.id.addField);
-        submitButton = findViewById(R.id.submit);
-        addImageButton = findViewById(R.id.addImage);
-        Time = findViewById(R.id.time);
+        foodNameField = findViewById(R.id.editName);
+        Steps = findViewById(R.id.editSteps);
+        descriptionField = findViewById(R.id.editDescription);
+        ingredientsField = findViewById(R.id.editIngredients); // Single EditText for ingredients
+        submitButton = findViewById(R.id.updateButton);
+        addImageButton = findViewById(R.id.uploadImageButton);
+        Time = findViewById(R.id.editTime);
         categorySpinner = findViewById(R.id.categorySpinner); // Initialize category spinner
-
-        // Add dynamic fields for ingredients
-        addFieldButton.setOnClickListener(v -> addNewField());
 
         // Image picker launcher
         ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
@@ -95,21 +89,6 @@ public class AddRecipe extends AppCompatActivity {
         });
     }
 
-    // Method to dynamically add a new ingredient field
-    private void addNewField() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View newField = inflater.inflate(R.layout.ingredient_field, ingredientsContainer, false);
-
-        EditText ingredientField = newField.findViewById(R.id.ingredient_name);
-        EditText quantityField = newField.findViewById(R.id.ingredient_quantity);
-
-        ingredientField.setHint("Ingredient " + fieldCounter);
-        quantityField.setHint("Quantity " + fieldCounter);
-
-        ingredientsContainer.addView(newField);
-        fieldCounter++;
-    }
-
     private void uploadImageToFirebase(Uri uri) {
         // Create a reference for the image file in Firebase Storage
         String fileName = foodNameField.getText().toString().trim().replaceAll("\\s+", "_") + "_" + System.currentTimeMillis() + ".jpg";
@@ -134,29 +113,15 @@ public class AddRecipe extends AppCompatActivity {
         String time1 = Time.getText().toString().trim();
         String steps = Steps.getText().toString().trim(); // Capture steps here
         String selectedCategory = categorySpinner.getSelectedItem().toString(); // Get selected category
+        String ingredients = ingredientsField.getText().toString().trim(); // Get ingredients from single input
+        String userId = mAuth.getCurrentUser().getUid(); // Get current user ID
+
         Double score = 0.0;
-        int ratingCount=0;
+        int ratingCount = 0;
 
-        if (foodName.isEmpty() || description.isEmpty()) {
-            Toast.makeText(this, "Please enter food name and description.", Toast.LENGTH_SHORT).show();
+        if (foodName.isEmpty() || description.isEmpty() || ingredients.isEmpty()) {
+            Toast.makeText(this, "Please enter food name, description, and ingredients.", Toast.LENGTH_SHORT).show();
             return;
-        }
-
-        // Initialize ingredients map
-        Map<String, String> ingredientsMap = new HashMap<>();
-
-        // Retrieve ingredient data from dynamically added fields
-        for (int i = 0; i < ingredientsContainer.getChildCount(); i++) {
-            View ingredientView = ingredientsContainer.getChildAt(i);
-            EditText ingredientField = ingredientView.findViewById(R.id.ingredient_name);
-            EditText quantityField = ingredientView.findViewById(R.id.ingredient_quantity);
-
-            String ingredientName = ingredientField.getText().toString().trim();
-            String quantity = quantityField.getText().toString().trim();
-
-            if (!ingredientName.isEmpty() && !quantity.isEmpty()) {
-                ingredientsMap.put(ingredientName, quantity);
-            }
         }
 
         // Retrieve the last recipe ID and generate the next custom ID
@@ -172,8 +137,8 @@ public class AddRecipe extends AppCompatActivity {
                 }
                 String newId = generateNextId(lastId);
 
-                // Create a RecipeClass object including the category
-                RecipeDomain recipe = new RecipeDomain(newId, foodName, description, imageUrl, time1, score, ratingCount, ingredientsMap, steps, selectedCategory); // Include selectedCategory
+                // Create a RecipeDomain object including the category and userId
+                RecipeDomain recipe = new RecipeDomain(newId, foodName, description, imageUrl, time1, score, ratingCount, ingredients, steps, selectedCategory, userId); // Include selectedCategory and userId
 
                 // Prepare the recipe map
                 Map<String, Object> recipeMap = new HashMap<>();
@@ -184,8 +149,9 @@ public class AddRecipe extends AppCompatActivity {
                 recipeMap.put("imageUrl", imageUrl); // Include the image URL here
                 recipeMap.put("steps", steps); // Add steps to the map
                 recipeMap.put("RatingCount", ratingCount);
-                recipeMap.put("ingredients", ingredientsMap); // Add ingredients to the map
+                recipeMap.put("ingredients", ingredients); // Add ingredients to the map
                 recipeMap.put("category", selectedCategory); // Add selected category to the map
+                recipeMap.put("userId", userId); // Add userId to the map
 
                 // Push to Firebase using custom ID
                 recipeRef.child(newId).setValue(recipeMap)
