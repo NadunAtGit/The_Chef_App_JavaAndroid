@@ -74,25 +74,35 @@ public class MyRecipes extends AppCompatActivity {
     }
 
     private void fetchRecipeDetails(DataSnapshot recipeSnapshot) {
-
         String foodName = recipeSnapshot.child("foodName").getValue(String.class);
         String description = recipeSnapshot.child("description").getValue(String.class);
         String recipeId = recipeSnapshot.getKey(); // Get recipe ID from the snapshot key
         String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
+        String videoUrl = recipeSnapshot.child("videoUrl").getValue(String.class);
         String time = recipeSnapshot.child("time").getValue(String.class);
-        Double score = recipeSnapshot.child("score").getValue(Double.class) != null ?
-                recipeSnapshot.child("score").getValue(Double.class) : 0.0;
-        int ratingCount = recipeSnapshot.child("ratingCount").getValue(Integer.class); // Ensure the field name matches
+
+        // Handle score and ratingCount with null check and default values
+        Double score = 0.0;
+        if (recipeSnapshot.child("score").getValue() != null) {
+            score = recipeSnapshot.child("score").getValue(Double.class);
+        }
+
+        int ratingCount = 0; // Default to 0
+        if (recipeSnapshot.child("ratingCount").getValue() != null) {
+            ratingCount = recipeSnapshot.child("ratingCount").getValue(Integer.class);
+        }
+
         String steps = recipeSnapshot.child("steps").getValue(String.class);
         String category = recipeSnapshot.child("category").getValue(String.class);
         String userId = recipeSnapshot.child("addedBy").getValue(String.class); // Assuming addedBy is the userId
         String ingredients = recipeSnapshot.child("ingredients").getValue(String.class);
 
         // Create RecipeDomain object and add to list
-        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category, userId);
+        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl,videoUrl, time, score, ratingCount, ingredients, steps, category, userId);
         myRecipesList.add(recipe);
 
         // Update adapter with the recipes
         adapter.notifyItemInserted(myRecipesList.size() - 1); // Notify adapter of the new item added
     }
+
 }

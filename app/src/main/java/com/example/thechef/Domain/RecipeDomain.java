@@ -7,6 +7,7 @@ public class RecipeDomain implements Serializable {
     private String foodName;
     private String description;
     private String imageUrl;
+    private String videoUrl;
     private String time;
     private Double score;
     private int ratingCount; // Added field to store the number of ratings
@@ -16,12 +17,14 @@ public class RecipeDomain implements Serializable {
     private String userId; // New attribute for user ID
 
     // Updated constructor to include the new userId attribute
-    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl, String time, Double score, int ratingCount, String ingredients, String steps, String category, String userId) {
+    public RecipeDomain(String recipeId, String foodName, String description, String imageUrl,String videoUrl, String time, Double score, int ratingCount, String ingredients, String steps, String category, String userId) {
         this.recipeId = recipeId;
         this.foodName = foodName;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.videoUrl=videoUrl;
         this.time = time;
+
         this.score = score;
         this.ratingCount = ratingCount;
         this.ingredients = ingredients; // Initialize ingredients as a single string
@@ -60,6 +63,14 @@ public class RecipeDomain implements Serializable {
     }
 
     public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getVideoUrl(String videoUrl) {
+        return imageUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
         this.imageUrl = imageUrl;
     }
 

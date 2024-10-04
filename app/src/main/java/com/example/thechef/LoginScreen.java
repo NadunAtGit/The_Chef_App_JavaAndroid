@@ -36,7 +36,14 @@ public class LoginScreen extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize UI components
+        if (mAuth.getCurrentUser() != null) {
+            // User is logged in, navigate to MainActivity
+            startActivity(new Intent(LoginScreen.this, MainActivity.class));
+            finish();  // Finish LoginScreen so that user can't go back to it
+            return;  // Stop further execution of onCreate
+        }
+
+            // Initialize UI components
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);

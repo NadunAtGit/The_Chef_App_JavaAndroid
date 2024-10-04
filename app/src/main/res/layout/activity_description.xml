@@ -98,7 +98,7 @@
                         android:layout_weight="0.6">
 
                         <ImageView
-                            android:id="@+id/imageView4"
+                            android:id="@+id/rate"
                             android:layout_width="30dp"
                             android:layout_height="wrap_content"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -115,9 +115,9 @@
                             android:textColor="@color/light_black"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/imageView4"
-                            app:layout_constraintStart_toStartOf="@+id/imageView4"
-                            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+                            app:layout_constraintEnd_toEndOf="@+id/rate"
+                            app:layout_constraintStart_toStartOf="@+id/rate"
+                            app:layout_constraintTop_toBottomOf="@+id/rate" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -220,23 +220,22 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"></LinearLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <TextView
                     android:id="@+id/ingredientsContainer"
                     android:layout_width="0dp"
                     android:layout_height="150dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="48dp"
                     android:layout_marginEnd="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView15">
+                    android:text="Ingredients"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppins"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView15"
+                android:gravity="start"
+                />
 
-                    <!-- You can add your content here, for example: -->
-                    <!-- Example TextView inside the ConstraintLayout -->
-
-                    <!-- Add more views as needed -->
-                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -244,7 +243,7 @@
                     android:orientation="horizontal" />
 
                 <TextView
-                    android:id="@+id/textView19"
+                    android:id="@+id/stepsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="56dp"
@@ -258,6 +257,20 @@
                     app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ingredientsContainer" />
+
+                <com.google.android.exoplayer2.ui.PlayerView
+                    android:id="@+id/videoView"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toTopOf="@id/Steps"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/stepsTitle"
+                    app:resize_mode="fit" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -280,7 +293,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+                    app:layout_constraintTop_toBottomOf="@+id/videoView" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

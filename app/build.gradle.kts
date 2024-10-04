@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation(libs.recyclerview)
+    implementation ("com.google.android.exoplayer:exoplayer:2.18.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation(libs.material)
     implementation("de.hdodenhof:circleimageview:3.1.0")

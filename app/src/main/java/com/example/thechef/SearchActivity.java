@@ -87,6 +87,7 @@ public class SearchActivity extends AppCompatActivity {
                         String recipeId = recipeSnapshot.getKey();
                         String description = recipeSnapshot.child("description").getValue(String.class);
                         String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
+                        String videoUrl = recipeSnapshot.child("videoUrl").getValue(String.class);
                         String time = recipeSnapshot.child("time").getValue(String.class);
                         Double score = recipeSnapshot.child("score").getValue(Double.class);
                         int ratingCount = recipeSnapshot.child("RatingCount").getValue(int.class);
@@ -99,7 +100,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
                         // Add each recipe to the list
-                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category,userID);
+                        RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl,videoUrl, time, score, ratingCount, ingredients, steps, category,userID);
                         recipeList.add(recipe);
                     }
                 }

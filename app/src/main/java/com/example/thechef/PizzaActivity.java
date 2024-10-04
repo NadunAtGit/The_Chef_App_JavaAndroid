@@ -52,6 +52,7 @@ public class PizzaActivity extends AppCompatActivity {
                     String foodName = recipeSnapshot.child("foodName").getValue(String.class);
                     String description = recipeSnapshot.child("description").getValue(String.class);
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
+                    String videoUrl = recipeSnapshot.child("videoUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
                     int ratingCount = recipeSnapshot.child("RatingCount").getValue(Integer.class); // Changed to Integer.class
@@ -63,7 +64,7 @@ public class PizzaActivity extends AppCompatActivity {
                     // Ensure category is "Pizza"
                     if ("Pizza".equalsIgnoreCase(category)) {
                         // Add each pizza recipe to the list
-                        RecipeDomain pizzaRecipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category, userId);
+                        RecipeDomain pizzaRecipe = new RecipeDomain(recipeId, foodName, description, imageUrl,videoUrl, time, score, ratingCount, ingredients, steps, category, userId);
                         pizzaRecipeList.add(pizzaRecipe);
                     }
                 }

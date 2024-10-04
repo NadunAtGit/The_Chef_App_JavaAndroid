@@ -78,6 +78,7 @@ public class SavedActivity extends AppCompatActivity {
                     String foodName = recipeSnapshot.child("foodName").getValue(String.class);
                     String description = recipeSnapshot.child("description").getValue(String.class);
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
+                    String videoUrl = recipeSnapshot.child("videoUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
                     Double score = recipeSnapshot.child("score").getValue(Double.class);
                     int ratingCount = recipeSnapshot.child("RatingCount").getValue(Integer.class);
@@ -90,7 +91,7 @@ public class SavedActivity extends AppCompatActivity {
 
 
                     // Create RecipeDomain object with the concatenated ingredients
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, time, score, ratingCount, ingredients, steps, category,userId);
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl,videoUrl, time, score, ratingCount, ingredients, steps, category,userId);
                     savedRecipesList.add(recipe);
 
                     // Update adapter with the saved recipes
