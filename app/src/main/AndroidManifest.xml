@@ -16,6 +16,9 @@
         android:theme="@style/Theme.THECHEF"
         tools:targetApi="31">
         <activity
+            android:name=".updateProfile"
+            android:exported="false" />
+        <activity
             android:name=".UpdateActivity"
             android:exported="false" />
         <activity

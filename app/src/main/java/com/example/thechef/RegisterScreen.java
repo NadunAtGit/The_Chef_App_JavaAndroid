@@ -1,24 +1,30 @@
 package com.example.thechef;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,28 +34,33 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.util.Locale;
+import java.util.UUID;
 
 public class RegisterScreen extends AppCompatActivity {
-    EditText name, password, email, confirm_password;
     private static final String TAG = "RegisterScreen";
-    FirebaseAuth mAuth;
-    Button google;
+    private static final int PICK_IMAGE_REQUEST = 1;  // Request code for image picker
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;  // Firebase Database Reference
+    private StorageReference storageReference;  // Firebase Storage Reference
 
-    ProgressBar progressBar;
-    DatabaseReference databaseReference;  // Firebase Database Reference
+    private EditText name, password, email, confirm_password;
+    private ImageView profilePic;
+    private Uri imageUri;  // Uri to hold the selected image
+
+    private ProgressBar progressBar;
 
     @Override
     public void onStart() {
         super.onStart();
-        // Initialize FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
-
-        // Check if a user is currently signed in
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // If there is a logged-in user, redirect to MainActivity
             startActivity(new Intent(RegisterScreen.this, MainActivity.class));
             finish();
         }
@@ -58,144 +69,137 @@ public class RegisterScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register_screen);
+
         mAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");  // Firebase Database reference
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        storageReference = FirebaseStorage.getInstance().getReference("ProfilePics");  // Initialize Firebase Storage Reference
 
-        // Set padding for system bars
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        // Initialize UI elements
-        TextView su = findViewById(R.id.signup);
-        Button th = findViewById(R.id.toHome);
+        profilePic = findViewById(R.id.profilepic);
+        Button registerBtn = findViewById(R.id.toHome);
+        progressBar = findViewById(R.id.progress);
         name = findViewById(R.id.editName);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         confirm_password = findViewById(R.id.con_password);
-        progressBar = findViewById(R.id.progress);
 
         // Initially hide the progress bar
         progressBar.setVisibility(View.GONE);
 
-        // Redirect to LoginScreen on click of signup text
-        su.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(RegisterScreen.this, LoginScreen.class));
-                finish();
-            }
-        });
+        // Load default circular image
+        loadCircularImage(R.drawable.user, profilePic);
 
-        // Handle register button click
-        th.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Show progress bar when registration starts
-                progressBar.setVisibility(View.VISIBLE);
+        // Set OnClickListener to open the image picker when the profile picture is clicked
+        profilePic.setOnClickListener(v -> openImagePicker());
 
-                String emailV = email.getText().toString().trim();
-                String passwordV = password.getText().toString().trim();
-                String confirmPasswordV = confirm_password.getText().toString().trim();
+        // Register button click listener
+        registerBtn.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
 
-                // Validate input fields
-                if (TextUtils.isEmpty(emailV)) {
-                    Toast.makeText(RegisterScreen.this, "Please Enter Email", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                    return;
-                }
-                if (TextUtils.isEmpty(passwordV)) {
-                    Toast.makeText(RegisterScreen.this, "Please Enter Password", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                    return;
-                }
-                if (!passwordV.equals(confirmPasswordV)) {
-                    Toast.makeText(RegisterScreen.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                    return;
-                }
+            String emailV = email.getText().toString().trim();
+            String passwordV = password.getText().toString().trim();
+            String confirmPasswordV = confirm_password.getText().toString().trim();
 
-                // Create a new user with Firebase Authentication
+            if (validateInputs(emailV, passwordV, confirmPasswordV)) {
                 mAuth.createUserWithEmailAndPassword(emailV, passwordV)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                // Hide progress bar after registration is completed
-                                progressBar.setVisibility(View.GONE);
-
-                                if (task.isSuccessful()) {
-                                    // Firebase Authentication success
-                                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                                    if (firebaseUser != null) {
-                                        String userId = firebaseUser.getUid();
-                                        saveUserDetails(userId, name.getText().toString(), emailV, passwordV);
-                                    }
-                                } else {
-                                    // If sign in fails
-                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(RegisterScreen.this, "Authentication failed: " + task.getException().getMessage(),
-                                            Toast.LENGTH_SHORT).show();
+                        .addOnCompleteListener(task -> {
+                            progressBar.setVisibility(View.GONE);
+                            if (task.isSuccessful()) {
+                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                                if (firebaseUser != null) {
+                                    // Save the image to Firebase Storage and user details to Firebase Database
+                                    uploadImageAndSaveDetails(firebaseUser.getUid(), emailV);
                                 }
+                            } else {
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(RegisterScreen.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
         });
+    }
+
+    // Method to open image picker
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    // Handle result from image picker
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                profilePic.setImageBitmap(bitmap);  // Set the selected image to ImageView
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Validate input fields
+    private boolean validateInputs(String emailV, String passwordV, String confirmPasswordV) {
+        if (TextUtils.isEmpty(emailV)) {
+            Toast.makeText(RegisterScreen.this, "Please Enter Email", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            return false;
+        }
+        if (TextUtils.isEmpty(passwordV)) {
+            Toast.makeText(RegisterScreen.this, "Please Enter Password", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            return false;
+        }
+        if (!passwordV.equals(confirmPasswordV)) {
+            Toast.makeText(RegisterScreen.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            return false;
+        }
+        return true;
+    }
+
+    // Upload selected image to Firebase Storage and save user details to Firebase Database
+    private void uploadImageAndSaveDetails(String userId, String email) {
+        if (imageUri != null) {
+            StorageReference fileReference = storageReference.child(userId + "_" + UUID.randomUUID().toString());
+            fileReference.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Get the download URL and save user details
+                        saveUserDetails(userId, name.getText().toString(), email, uri.toString());
+                    }))
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(RegisterScreen.this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            // No image selected, save user details without profile pic URL
+            saveUserDetails(userId, name.getText().toString(), email, null);
+        }
     }
 
     // Save user details to Firebase Database
-    private void saveUserDetails(String firebaseUserId, String name, String email, String password) {
-        // Get the last user ID from Firebase Database and generate the next one
-        databaseReference.orderByKey().limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String lastUserId = "U-000";  // Default value if no users exist
-
-                // Get the last user ID
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    lastUserId = snapshot.getKey();
-                }
-
-                // Generate the next user ID
-                String newUserId = getNextUserId(lastUserId);
-
-                // Create a new User object
-                User user = new User(newUserId, name, email, password);
-
-                // Save user data to Firebase
-                databaseReference.child(newUserId).setValue(user)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(RegisterScreen.this, "User details saved successfully.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(RegisterScreen.this, MainActivity.class));
-                                finish();
-                            } else {
-                                Toast.makeText(RegisterScreen.this, "Failed to save user details.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Failed to retrieve last user ID.", databaseError.toException());
-            }
-        });
+    private void saveUserDetails(String firebaseUserId, String name, String email, String profilePicUrl) {
+        User user = new User(firebaseUserId, name, email, profilePicUrl);
+        databaseReference.child(firebaseUserId).setValue(user)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RegisterScreen.this, "User registered successfully.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterScreen.this, MainActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterScreen.this, "Failed to register user.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    // Generate the next user ID
-    private String getNextUserId(String lastUserId) {
-        String idNumber = lastUserId.substring(2);  // Remove "U-"
-        int nextIdNumber = Integer.parseInt(idNumber) + 1;
-        return String.format(Locale.getDefault(), "U-%03d", nextIdNumber);
+    // Load circular image using Glide
+    private void loadCircularImage(int imageResId, ImageView imageView) {
+        Glide.with(this)
+                .load(imageResId)
+                .circleCrop()
+                .into(imageView);
     }
 }
-
-
-
-
-
-
-
