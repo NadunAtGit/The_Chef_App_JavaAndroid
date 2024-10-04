@@ -34,6 +34,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private TextView ingredientsContainer;
     private ImageView foodImage,rate;
     private Button save;
+    private ConstraintLayout share;
     private String recipeId;
     private DatabaseReference savedRecipesRef;
     private FloatingActionButton backButton;
@@ -52,6 +53,7 @@ public class DescriptionActivity extends AppCompatActivity {
         // Initialize views
         foodNameTxt = findViewById(R.id.foodName);
         rate=findViewById(R.id.rate);
+        share=findViewById(R.id.shareButton);
         save = findViewById(R.id.save);
         foodDescriptionTxt = findViewById(R.id.foodDescription);
         stepsTxt = findViewById(R.id.Steps);
@@ -67,6 +69,35 @@ public class DescriptionActivity extends AppCompatActivity {
                 startActivity(new Intent(DescriptionActivity.this, MainActivity.class));
             }
         });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Prepare the text to share
+                String shareText = "Check out this recipe: " + foodNameTxt.getText().toString() +
+                        "\n\n" + foodDescriptionTxt.getText().toString() +
+                        "\n\nIngredients:\n" + ingredientsContainer.getText().toString() +
+                        "\n\nSteps:\n" + stepsTxt.getText().toString();
+
+                // Create an intent to share the text via WhatsApp
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain"); // We're sharing plain text
+
+                // Check if WhatsApp is installed
+                shareIntent.setPackage("com.whatsapp");
+
+                // Add the text to share
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+
+                // Try to launch WhatsApp, or show a message if it's not installed
+                try {
+                    startActivity(shareIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(DescriptionActivity.this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         rate.setOnClickListener(v -> showRatingDialog(recipeId));
         // Firebase database reference for SavedRecipes
         savedRecipesRef = FirebaseDatabase.getInstance().getReference("SavedRecipes");
