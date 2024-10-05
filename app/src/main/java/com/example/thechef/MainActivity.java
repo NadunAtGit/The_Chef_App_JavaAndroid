@@ -102,8 +102,33 @@ public class MainActivity extends AppCompatActivity {
 
     // Method to fetch current user's name
     private void fetchCurrentUserData() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            // Check if the user signed in with Google (displayName available)
+            String displayName = currentUser.getDisplayName();
+
+            if (displayName != null && !displayName.isEmpty()) {
+                // If the display name is available (Google sign-in), use it
+                String[] nameParts = displayName.split(" ");
+                String firstName = nameParts[0]; // Get the first part of the name
+
+                welcomeText.setText("Hello " + firstName); // Set welcome text for Google user
+            } else {
+                // If the user signed in via email, fetch the name from Firebase Realtime Database
+                fetchEmailUserName();
+            }
+        } else {
+            // Handle case when no user is logged in (optional)
+            welcomeText.setText("Hello Guest");
+            Log.e("MainActivity", "User not logged in.");
+        }
+    }
+
+    // Method to fetch the user's name from Firebase if signed in with email
+    private void fetchEmailUserName() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference userRef = database.getReference("Users").child(currentUserId); // Adjust the path according to your structure
+        DatabaseReference userRef = database.getReference("Users").child(currentUserId); // Adjust path if needed
 
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -111,12 +136,12 @@ public class MainActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     String name = dataSnapshot.child("name").getValue(String.class); // Get the user's name
                     if (name != null) {
-                        welcomeText.setText("Hello " + name); // Set welcome text
+                        welcomeText.setText("Hello " + name); // Set welcome text for email user
                     } else {
                         welcomeText.setText("Hello User"); // Fallback if name is null
                     }
                 } else {
-                    Log.e("FirebaseData", "User does not exist");
+                    Log.e("FirebaseData", "User does not exist in database");
                 }
             }
 

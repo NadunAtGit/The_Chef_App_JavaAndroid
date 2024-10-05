@@ -1,20 +1,20 @@
 package com.example.thechef;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,86 +22,110 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class profileActivity extends AppCompatActivity {
-    ImageView logout;
-    private Button updateProfile;
+
     private TextView username, email;
-    private DatabaseReference databaseReference;
+    private ImageView profilepic, logout;
+    private Button updateProfile;
+    private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
-        updateProfile=findViewById(R.id.updateProfile);
+
+        // Initialize Firebase Auth and Database
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        // Initialize UI components
         username = findViewById(R.id.username);
         email = findViewById(R.id.email);
-        ImageView imageView = findViewById(R.id.profilepic);
+        profilepic = findViewById(R.id.profilepic);
         logout = findViewById(R.id.logout);
+        updateProfile = findViewById(R.id.updateProfile);
 
-        // Initialize Firebase Database reference
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        // Check if user is logged in
+        if (user != null) {
+            String userId = user.getUid();
+            String emailAddress = user.getEmail();
 
-        // Load current user's data
-        loadUserData();
+            email.setText(emailAddress); // Set email
 
-        // Handle logout
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(profileActivity.this, LoginScreen.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+            // Check if user signed in via Google or email/password
+            if (user.getProviderData().get(1).getProviderId().equals("google.com")) {
+                // Handle Google signed-in user
+                loadGoogleUserProfile(user);
+            } else {
+                // Handle Email/Password signed-in user
+                loadEmailUserProfile(userId);
             }
+        }
+
+        // Logout functionality
+        logout.setOnClickListener(v -> {
+            auth.signOut();
+            Toast.makeText(profileActivity.this, "Logged out successfully.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(profileActivity.this, LoginScreen.class);
+            startActivity(intent);
+            finish();
         });
-        updateProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create an intent to open updateProfile.java activity
+
+        // Hide Update Profile button for Google signed users
+        if (user != null && user.getProviderData().get(1).getProviderId().equals("google.com")) {
+            updateProfile.setVisibility(View.GONE); // Hide update profile button for Google users
+        } else {
+            // Show update profile button and handle click for email/password users
+            updateProfile.setOnClickListener(v -> {
                 Intent intent = new Intent(profileActivity.this, updateProfile.class);
                 startActivity(intent);
-            }
-        });
-
-
-        // Apply window insets for proper padding
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+            });
+        }
     }
 
-    private void loadUserData() {
-        // Get the current user ID
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private void loadGoogleUserProfile(FirebaseUser user) {
+        // Get Google profile photo
+        Uri googleProfilePhoto = user.getPhotoUrl();
+        String displayName = user.getDisplayName();
 
-        // Retrieve user data from Firebase
-        databaseReference.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+        username.setText(displayName);  // Set Google username
+
+        if (googleProfilePhoto != null) {
+            Glide.with(this)
+                    .load(googleProfilePhoto)
+                    .circleCrop()
+                    .into(profilepic);  // Load profile photo using Glide
+        }
+    }
+
+    private void loadEmailUserProfile(String userId) {
+        userRef = database.getReference("Users").child(userId);
+
+        // Retrieve the user data from Firebase Database for email/password users
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Get user details
-                    String name = dataSnapshot.child("name").getValue(String.class);
-                    String emailValue = dataSnapshot.child("email").getValue(String.class);
-                    String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    String profileUrl = snapshot.child("imageUrl").getValue(String.class); // Retrieve imageUrl from Firebase
 
-                    // Set the retrieved values to TextViews
-                    username.setText(name);
-                    email.setText(emailValue);
+                    username.setText(name);  // Set email/password user name
 
-                    // Load the profile picture using Glide
-                    Glide.with(profileActivity.this)
-                            .load(imageUrl)
-                            .circleCrop()
-                            .into((ImageView) findViewById(R.id.profilepic));
+                    if (profileUrl != null && !profileUrl.isEmpty()) {
+                        // Load profile photo using Glide
+                        Glide.with(profileActivity.this)
+                                .load(profileUrl)
+                                .circleCrop()
+                                .into(profilepic);
+                    }
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(profileActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
             }
         });
     }
