@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
     private void fetchRecipeDataFromFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference recipeRef = database.getReference("recipes");
+        DatabaseReference ratingsRef = database.getReference("Ratings");
 
         recipeRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -177,30 +178,59 @@ public class MainActivity extends AppCompatActivity {
                     String imageUrl = recipeSnapshot.child("imageUrl").getValue(String.class);
                     String videoUrl = recipeSnapshot.child("videoUrl").getValue(String.class);
                     String time = recipeSnapshot.child("time").getValue(String.class);
-                    Double score = recipeSnapshot.child("score").getValue(Double.class);
-                    int ratingCount = recipeSnapshot.child("RatingCount").getValue(Integer.class);
-                    String steps = recipeSnapshot.child("steps").getValue(String.class); // Fetching the steps
+                    String steps = recipeSnapshot.child("steps").getValue(String.class);
+
                     String category = recipeSnapshot.child("category").getValue(String.class);
-                    String userId = recipeSnapshot.child("userId").getValue(String.class); // Fetching user ID
+                    String userId = recipeSnapshot.child("userId").getValue(String.class);
 
                     // Fetching ingredients as a single string
                     StringBuilder ingredientsBuilder = new StringBuilder();
                     for (DataSnapshot ingredientSnapshot : recipeSnapshot.child("ingredients").getChildren()) {
                         String ingredientName = ingredientSnapshot.getKey();
                         String quantity = ingredientSnapshot.getValue(String.class);
-                        if (ingredientName != null && quantity != null) {  // Check for null values
+                        if (ingredientName != null && quantity != null) {
                             ingredientsBuilder.append(ingredientName).append(": ").append(quantity).append("\n");
                         }
                     }
-                    String ingredients = ingredientsBuilder.toString().trim(); // Convert to String and trim
+                    String ingredients = ingredientsBuilder.toString();
 
-                    // Add each recipe to the items list with recipeId
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, videoUrl, time, score, ratingCount, ingredients, steps, category, userId);
-                    items.add(recipe);
+                    // Now, fetch ratings for this recipe from Ratings table
+                    ratingsRef.child(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot ratingsSnapshot) {
+                            double totalScore = 0;
+                            int ratingCount = 0;
+
+                            // Iterate over all ratings for this recipe
+                            for (DataSnapshot userRatingSnapshot : ratingsSnapshot.getChildren()) {
+                                Double rating = userRatingSnapshot.getValue(Double.class);
+                                if (rating != null) {
+                                    totalScore += rating;
+                                    ratingCount++;
+                                }
+                            }
+
+                            // Calculate the average rating
+                            double averageRating = (ratingCount > 0) ? totalScore / ratingCount : 0;
+
+                            // Filter recipes based on average rating
+                            if (averageRating >= 3.5) {
+                                RecipeDomain recipe = new RecipeDomain(
+                                        recipeId, foodName, description, imageUrl, videoUrl, time,totalScore,ratingCount, ingredients,steps,category, userId);
+
+                                items.add(recipe);  // Add the recipe to the list only if average rating >= 3.5
+                            }
+
+                            // Notify the adapter of the changes
+                            adapterFoodList.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e("FirebaseRatings", "Error retrieving ratings: " + databaseError.getMessage());
+                        }
+                    });
                 }
-
-                // Notify the adapter that the data has changed so it can refresh the view
-                adapterFoodList.notifyDataSetChanged();
             }
 
             @Override
@@ -209,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     protected void onResume() {
