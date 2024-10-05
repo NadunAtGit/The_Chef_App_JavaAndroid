@@ -35,11 +35,6 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         this.context = context;
     }
 
-    public void setFilteredRecipes(ArrayList<RecipeDomain> filteredRecipes) {
-        this.recipeList = filteredRecipes;
-        notifyDataSetChanged(); // Refresh the RecyclerView
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -84,16 +79,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                 if (count > 0) {
                     float averageScore = totalScore / count;
                     holder.textScore.setText(String.format("%.1f", averageScore)); // Show average rating
-
-                    // Only show recipes with a score of 3.5 or more
-                    if (averageScore < 3.5) {
-                        holder.itemView.setVisibility(View.GONE); // Hide the item
-                    } else {
-                        holder.itemView.setVisibility(View.VISIBLE); // Show the item
-                    }
                 } else {
                     holder.textScore.setText("No rating yet"); // Default text if no rating
-                    holder.itemView.setVisibility(View.GONE); // Hide if no rating
                 }
             }
 
@@ -131,6 +118,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                     })
                     .show();
         });
+
     }
 
     @Override

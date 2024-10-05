@@ -90,6 +90,10 @@ public class RecipeDomain implements Serializable {
         this.score = score;
     }
 
+
+
+
+
     public int getRatingCount() {
         return ratingCount;
     }

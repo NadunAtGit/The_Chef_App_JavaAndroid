@@ -81,7 +81,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
                     float averageScore = totalScore / count;
                     holder.scoreTxt.setText(String.format("%.1f", averageScore)); // Show average rating
                 } else {
-                    holder.scoreTxt.setText("0.0"); // Default text if no rating
+                    holder.scoreTxt.setText("No rating yet"); // Default text if no rating
                 }
             }
 
