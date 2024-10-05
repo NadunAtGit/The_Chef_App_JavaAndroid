@@ -99,19 +99,21 @@
 
                         <ImageView
                             android:id="@+id/rate"
-                            android:layout_width="30dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="31dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="4dp"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.487"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:srcCompat="@drawable/star" />
 
                         <TextView
                             android:id="@+id/scoreTxt"
-                            android:layout_width="15dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="15dp"
                             android:layout_marginTop="5dp"
-                            android:text="4.5"
+                            android:text="4.0"
                             android:textColor="@color/light_black"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -224,18 +226,17 @@
                 <TextView
                     android:id="@+id/ingredientsContainer"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="48dp"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/poppins"
+                    android:gravity="start"
                     android:text="Ingredients"
-                android:textSize="15sp"
-                android:fontFamily="@font/poppins"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView15"
-                android:gravity="start"
-                />
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView15" />
 
 
                 <LinearLayout
@@ -302,17 +303,32 @@
                     android:orientation="horizontal"
                     tools:layout_editor_absoluteY="220dp"></LinearLayout>
 
-                <Button
-                    android:id="@+id/save"
+                <RatingBar
+                    android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="Submit"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Steps" />
+                    app:layout_constraintBottom_toTopOf="@id/save"
+                    app:layout_constraintTop_toBottomOf="@id/Steps"
+                    android:stepSize="0.5"
+                    android:numStars="5"
+                    android:rating="0"
+                    android:progressTint="@color/uber_eats_green"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"/>
+
+
+                <Button
+                    android:id="@+id/save"
+                    app:layout_constraintTop_toBottomOf="@id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="SAVE"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

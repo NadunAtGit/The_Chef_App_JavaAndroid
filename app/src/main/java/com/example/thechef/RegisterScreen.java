@@ -133,6 +133,10 @@ public class RegisterScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
+            Glide.with(this)
+                    .load(imageUri)
+                    .circleCrop() // Apply circular cropping
+                    .into(profilePic);
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 profilePic.setImageBitmap(bitmap);  // Set the selected image to ImageView

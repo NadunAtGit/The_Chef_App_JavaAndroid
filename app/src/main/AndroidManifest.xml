@@ -16,6 +16,27 @@
         android:theme="@style/Theme.THECHEF"
         tools:targetApi="31">
         <activity
+            android:name=".CurryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SnackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DessertActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DrinksActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SoupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SaladsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPassword"
+            android:exported="false" />
+        <activity
             android:name=".updateProfile"
             android:exported="false" />
         <activity

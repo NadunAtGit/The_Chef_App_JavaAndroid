@@ -38,7 +38,7 @@
                     app:srcCompat="@drawable/avatar" />
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/welcomeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="236dp"
@@ -65,7 +65,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/imageView"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintTop_toBottomOf="@+id/welcomeText" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -178,6 +178,7 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/mains"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_margin="8dp"
@@ -209,6 +210,7 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/salads"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_margin="8dp"
@@ -240,6 +242,7 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/soups"
                             android:layout_width="0dp"
                             android:layout_height="95dp"
                             android:layout_margin="8dp"
@@ -281,6 +284,7 @@
                     android:orientation="horizontal">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/drinks"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -312,6 +316,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/desserts"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -343,6 +348,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/snacks"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -374,6 +380,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/curry"
                         android:layout_width="0dp"
                         android:layout_height="95dp"
                         android:layout_margin="8dp"

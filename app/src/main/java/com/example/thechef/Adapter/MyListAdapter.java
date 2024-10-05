@@ -18,8 +18,11 @@ import com.example.thechef.Domain.RecipeDomain;
 import com.example.thechef.R;
 import com.example.thechef.DescriptionActivity;
 import com.example.thechef.UpdateActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -30,6 +33,11 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     public MyListAdapter(ArrayList<RecipeDomain> recipeList, Context context) {
         this.recipeList = recipeList;
         this.context = context;
+    }
+
+    public void setFilteredRecipes(ArrayList<RecipeDomain> filteredRecipes) {
+        this.recipeList = filteredRecipes;
+        notifyDataSetChanged(); // Refresh the RecyclerView
     }
 
     @NonNull
@@ -52,7 +60,48 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         // Set recipe details
         holder.textRecipeName.setText(recipe.getFoodName());
         holder.textTime.setText(recipe.getTime() + " min");
-        holder.textScore.setText(String.format("%.1f", recipe.getScore())); // Display score as text
+
+        // Fetch and display the average score from the Ratings table
+        DatabaseReference ratingsRef = FirebaseDatabase.getInstance().getReference("Ratings");
+        ratingsRef.child(recipe.getRecipeId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Calculate average rating
+                float totalScore = 0;
+                int count = 0;
+
+                // Sum all the scores for the recipe
+                for (DataSnapshot userRating : dataSnapshot.getChildren()) {
+                    // Assuming each child under the recipeId is a user ID with a score as its value
+                    Float score = userRating.getValue(Float.class);
+                    if (score != null) {
+                        totalScore += score; // Accumulate the scores
+                        count++; // Count the number of ratings
+                    }
+                }
+
+                // Calculate average and update textScore
+                if (count > 0) {
+                    float averageScore = totalScore / count;
+                    holder.textScore.setText(String.format("%.1f", averageScore)); // Show average rating
+
+                    // Only show recipes with a score of 3.5 or more
+                    if (averageScore < 3.5) {
+                        holder.itemView.setVisibility(View.GONE); // Hide the item
+                    } else {
+                        holder.itemView.setVisibility(View.VISIBLE); // Show the item
+                    }
+                } else {
+                    holder.textScore.setText("No rating yet"); // Default text if no rating
+                    holder.itemView.setVisibility(View.GONE); // Hide if no rating
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(context, "Failed to fetch ratings", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Set click listener to navigate to DescriptionActivity when item is clicked
         holder.itemView.setOnClickListener(v -> {
@@ -82,7 +131,6 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
                     })
                     .show();
         });
-
     }
 
     @Override
@@ -105,7 +153,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageRecipe,editButton,deleteButton; // ImageView for recipe image
+        ImageView imageRecipe, editButton, deleteButton; // ImageView for recipe image
         TextView textRecipeName; // TextView for recipe name
         TextView textTime; // TextView for preparation time
         TextView textScore; // TextView for recipe score
@@ -113,8 +161,8 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageRecipe = itemView.findViewById(R.id.imageRecipe);
-            deleteButton=itemView.findViewById(R.id.deleteButton);
-            editButton=itemView.findViewById(R.id.editRecipe);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
+            editButton = itemView.findViewById(R.id.editRecipe);
             textRecipeName = itemView.findViewById(R.id.textRecipeName);
             textTime = itemView.findViewById(R.id.textTime);
             textScore = itemView.findViewById(R.id.textScore); // Ensure this matches the layout

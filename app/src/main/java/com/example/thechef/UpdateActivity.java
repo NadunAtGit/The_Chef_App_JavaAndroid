@@ -149,6 +149,7 @@ public class UpdateActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
 
                 Toast.makeText(UpdateActivity.this, "Recipe updated successfully.", Toast.LENGTH_SHORT).show();
+
                 finish(); // Close the activity after updating
             } else {
 

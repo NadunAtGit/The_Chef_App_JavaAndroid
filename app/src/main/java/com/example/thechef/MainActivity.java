@@ -6,61 +6,125 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.thechef.Adapter.FoodListAdapter;
 import com.example.thechef.Domain.RecipeDomain;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterFoodList;
-    private ConstraintLayout pizza;
+    private ConstraintLayout pizza,mains,salads,soups,drinks,desserts,snacks,curry;
     private RecyclerView recyclerViewRecipe;
     private ArrayList<RecipeDomain> items = new ArrayList<>();  // Store recipes here
     ImageView profile, addrecipe, saved, myRecipes;
     EditText searchbar;
+    private TextView welcomeText;
+    private String currentUserId;
+
+    // Firebase authentication instance
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        // Get current user
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            currentUserId = currentUser.getUid();
+        } else {
+            // Handle the case when the user is not logged in (optional)
+            Log.e("MainActivity", "User not logged in.");
+            return; // Exit the onCreate if no user is logged in
+        }
+
+        // Initialize views
         profile = findViewById(R.id.profile);
+        soups=findViewById(R.id.soups);
+        drinks=findViewById(R.id.drinks);
+        desserts=findViewById(R.id.desserts);
+        snacks=findViewById(R.id.snacks);
+        curry=findViewById(R.id.curry);
         pizza = findViewById(R.id.PizzaButton);
+        salads=findViewById(R.id.salads);
+        mains=findViewById(R.id.mains);
         myRecipes = findViewById(R.id.myRecipes);
         saved = findViewById(R.id.saved);
         addrecipe = findViewById(R.id.addrecipe);
         searchbar = findViewById(R.id.searchbar);
+        welcomeText = findViewById(R.id.welcomeText);
 
+        // Set up search bar focus change listener
         searchbar.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
-                // Start SearchActivity when the search bar gains focus
                 startActivity(new Intent(MainActivity.this, SearchActivity.class));
-                // Optionally, you can clear the focus to avoid repeated triggering
                 searchbar.clearFocus();
             }
         });
 
-
         // OnClickListeners for various buttons
         addrecipe.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, AddRecipe.class)));
         pizza.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, PizzaActivity.class)));
+        mains.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MainCourseActivity.class)));
+        soups.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SoupActivity.class)));
+        curry.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, CurryActivity.class)));
+        salads.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SaladsActivity.class)));
+        snacks.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SnackActivity.class)));
+        desserts.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DessertActivity.class)));
+        drinks.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DrinksActivity.class)));
         myRecipes.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, MyRecipes.class)));
         saved.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SavedActivity.class)));
         profile.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, profileActivity.class)));
 
         initRecyclerView();  // Initialize RecyclerView
         fetchRecipeDataFromFirebase();  // Fetch data from Firebase
+        fetchCurrentUserData(); // Fetch current user's name
+    }
+
+    // Method to fetch current user's name
+    private void fetchCurrentUserData() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userRef = database.getReference("Users").child(currentUserId); // Adjust the path according to your structure
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String name = dataSnapshot.child("name").getValue(String.class); // Get the user's name
+                    if (name != null) {
+                        welcomeText.setText("Hello " + name); // Set welcome text
+                    } else {
+                        welcomeText.setText("Hello User"); // Fallback if name is null
+                    }
+                } else {
+                    Log.e("FirebaseData", "User does not exist");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseData", "Error retrieving user data: " + databaseError.getMessage());
+            }
+        });
     }
 
     // Initialize RecyclerView without predefined items
@@ -70,8 +134,6 @@ public class MainActivity extends AppCompatActivity {
         adapterFoodList = new FoodListAdapter(items, this);
         recyclerViewRecipe.setAdapter(adapterFoodList);
     }
-
-
 
     private void fetchRecipeDataFromFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -108,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                     String ingredients = ingredientsBuilder.toString().trim(); // Convert to String and trim
 
                     // Add each recipe to the items list with recipeId
-                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl,videoUrl, time, score, ratingCount, ingredients, steps, category, userId);
+                    RecipeDomain recipe = new RecipeDomain(recipeId, foodName, description, imageUrl, videoUrl, time, score, ratingCount, ingredients, steps, category, userId);
                     items.add(recipe);
                 }
 

@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -30,17 +29,19 @@ import com.google.firebase.database.ValueEventListener;
 
 public class DescriptionActivity extends AppCompatActivity {
 
-    private TextView foodNameTxt, foodDescriptionTxt, stepsTxt;
+    private TextView foodNameTxt, foodDescriptionTxt, stepsTxt, scoreTxt;
     private TextView ingredientsContainer;
-    private ImageView foodImage,rate;
+    private ImageView foodImage, rate;
     private Button save;
     private ConstraintLayout share;
     private String recipeId;
     private DatabaseReference savedRecipesRef;
+    private DatabaseReference ratingsRef;
     private FloatingActionButton backButton;
     private FirebaseAuth mAuth; // For user authentication
     private ExoPlayer player; // ExoPlayer instance
     private PlayerView playerView; // PlayerView for video playback
+    private RatingBar ratingBar; // RatingBar for recipe rating
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +53,9 @@ public class DescriptionActivity extends AppCompatActivity {
 
         // Initialize views
         foodNameTxt = findViewById(R.id.foodName);
-        rate=findViewById(R.id.rate);
-        share=findViewById(R.id.shareButton);
+        scoreTxt = findViewById(R.id.scoreTxt);
+        rate = findViewById(R.id.rate);
+        share = findViewById(R.id.shareButton);
         save = findViewById(R.id.save);
         foodDescriptionTxt = findViewById(R.id.foodDescription);
         stepsTxt = findViewById(R.id.Steps);
@@ -61,124 +63,59 @@ public class DescriptionActivity extends AppCompatActivity {
         foodImage = findViewById(R.id.foodImage);
         backButton = findViewById(R.id.backButton);
         playerView = findViewById(R.id.videoView); // Initialize PlayerView
+        ratingBar = findViewById(R.id.ratingBar); // Initialize RatingBar
+
+        // Firebase database reference
+        savedRecipesRef = FirebaseDatabase.getInstance().getReference("SavedRecipes");
+        ratingsRef = FirebaseDatabase.getInstance().getReference("Ratings");
+
         recipeId = getIntent().getStringExtra("recipeId");
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(DescriptionActivity.this, MainActivity.class));
-            }
+        backButton.setOnClickListener(v -> {
+            startActivity(new Intent(DescriptionActivity.this, MainActivity.class));
         });
 
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Prepare the text to share
-                String shareText = "Check out this recipe: " + foodNameTxt.getText().toString() +
-                        "\n\n" + foodDescriptionTxt.getText().toString() +
-                        "\n\nIngredients:\n" + ingredientsContainer.getText().toString() +
-                        "\n\nSteps:\n" + stepsTxt.getText().toString();
-
-                // Create an intent to share the text via WhatsApp
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain"); // We're sharing plain text
-
-                // Check if WhatsApp is installed
-                shareIntent.setPackage("com.whatsapp");
-
-                // Add the text to share
-                shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-
-                // Try to launch WhatsApp, or show a message if it's not installed
-                try {
-                    startActivity(shareIntent);
-                } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(DescriptionActivity.this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        rate.setOnClickListener(v -> showRatingDialog(recipeId));
-        // Firebase database reference for SavedRecipes
-        savedRecipesRef = FirebaseDatabase.getInstance().getReference("SavedRecipes");
+        share.setOnClickListener(v -> shareRecipe());
 
         if (recipeId != null) {
             fetchRecipeDataFromFirebase(recipeId);
+            fetchUserRating(recipeId);  // Fetch existing rating for the current user
+            fetchAverageRating(recipeId);  // Fetch average rating for this recipe
         }
 
         // Set click listener for the save button
         save.setOnClickListener(v -> saveRecipe(recipeId));
-    }
 
-    private void showRatingDialog(String recipeId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Rate this recipe");
-
-        // Set up the rating bar
-        final RatingBar ratingBar = new RatingBar(this);
-        ratingBar.setRating(0); // Default rating
-
-        builder.setView(ratingBar);
-
-        // Set up the dialog buttons
-        builder.setPositiveButton("Submit", (dialog, which) -> {
-            float rating = roundToNearestHalf(ratingBar.getRating());
-            submitRating(recipeId, rating);
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private float roundToNearestHalf(float rating) {
-        return Math.round(rating * 2) / 2.0f; // Round to nearest 0.5
-    }
-
-    // Submit rating to Firebase
-    private void submitRating(String recipeId, float rating) {
-        DatabaseReference ratingRef = FirebaseDatabase.getInstance().getReference("recipes").child(recipeId);
-
-        ratingRef.child("ratings").child(mAuth.getCurrentUser().getUid()).setValue(rating)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(DescriptionActivity.this, "Rating submitted!", Toast.LENGTH_SHORT).show();
-                    updateAverageRating(recipeId, rating);
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(DescriptionActivity.this, "Failed to submit rating.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void updateAverageRating(String recipeId, float newRating) {
-        DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("recipes").child(recipeId);
-
-        recipeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Float currentScore = snapshot.child("score").getValue(Float.class);
-                    Long ratingCount = snapshot.child("ratingCount").getValue(Long.class);
-
-                    if (currentScore == null) currentScore = 0f;
-                    if (ratingCount == null) ratingCount = 0L;
-
-                    // Calculate new average score
-                    float newAverage = ((currentScore * ratingCount) + newRating) / (ratingCount + 1);
-                    newAverage = roundToNearestHalf(newAverage); // Round to nearest 0.5
-
-                    // Update score and increment rating count
-                    recipeRef.child("score").setValue(newAverage);
-                    recipeRef.child("ratingCount").setValue(ratingCount + 1);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Error updating score: " + error.getMessage());
+        // Listen for rating changes and save rating
+        ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                saveRating(recipeId, rating);
             }
         });
     }
+
+    // Sharing the recipe
+    private void shareRecipe() {
+        String shareText = "Check out this recipe: " + foodNameTxt.getText().toString() +
+                "\n\n" + foodDescriptionTxt.getText().toString() +
+                "\n\nIngredients:\n" + ingredientsContainer.getText().toString() +
+                "\n\nSteps:\n" + stepsTxt.getText().toString();
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain"); // Sharing plain text
+        shareIntent.setPackage("com.whatsapp"); // Share via WhatsApp
+
+        // Add the text to share
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+
+        // Launch WhatsApp or show a message if not installed
+        try {
+            startActivity(shareIntent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(DescriptionActivity.this, "WhatsApp is not installed on your device.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void fetchRecipeDataFromFirebase(String recipeId) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference recipeRef = database.getReference("recipes").child(recipeId);
@@ -187,32 +124,27 @@ public class DescriptionActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Get the food name, description, image URL, ingredients, steps, and other fields
                     String foodName = dataSnapshot.child("foodName").getValue(String.class);
                     String description = dataSnapshot.child("description").getValue(String.class);
                     String imageUrl = dataSnapshot.child("imageUrl").getValue(String.class);
                     String steps = dataSnapshot.child("steps").getValue(String.class);
-                    String videoUrl = dataSnapshot.child("videoUrl").getValue(String.class); // Get video URL
-                    String ingredients = dataSnapshot.child("ingredients").getValue(String.class); // Retrieve ingredients as is
+                    String videoUrl = dataSnapshot.child("videoUrl").getValue(String.class);
+                    String ingredients = dataSnapshot.child("ingredients").getValue(String.class);
 
-                    // Set the text in the TextViews
                     foodNameTxt.setText(foodName);
                     foodDescriptionTxt.setText(description);
                     stepsTxt.setText(steps);
                     ingredientsContainer.setText(ingredients);
 
-                    // Load the image using Glide
                     Glide.with(DescriptionActivity.this)
                             .load(imageUrl)
                             .placeholder(android.R.drawable.ic_menu_gallery)
                             .error(android.R.drawable.ic_delete)
                             .into(foodImage);
 
-                    // Validate and play the video if the URL is valid
                     if (videoUrl != null && !videoUrl.isEmpty()) {
                         initializePlayer(videoUrl);
                     } else {
-                        // Show a message if video URL is null or empty
                         Toast.makeText(DescriptionActivity.this, "Video not available for this recipe.", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -225,23 +157,21 @@ public class DescriptionActivity extends AppCompatActivity {
         });
     }
 
-
     private void initializePlayer(String videoUrl) {
         player = new ExoPlayer.Builder(this).build();
         playerView.setPlayer(player);
 
-        // Prepare the media item
         MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoUrl));
         player.setMediaItem(mediaItem);
         player.prepare();
-        player.play(); // Start playing
+        player.play();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (player != null) {
-            player.release(); // Release the player when not in use
+            player.release();
             player = null;
         }
     }
@@ -249,16 +179,78 @@ public class DescriptionActivity extends AppCompatActivity {
     // Save recipe method
     private void saveRecipe(String recipeId) {
         String userId = mAuth.getCurrentUser().getUid(); // Get current user's ID
-
-        // Print userId to the console for debugging
-        Log.d("UserID", "Current User ID: " + userId); // 'UserID' is the tag for easy filtering in logcat
-
-        // Save the recipe under the user's node in Firebase (SavedRecipes > U-0001 > R-0001: true)
         savedRecipesRef.child(userId).child(recipeId).setValue(true).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(DescriptionActivity.this, "Recipe saved successfully!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(DescriptionActivity.this, "Failed to save recipe.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Save rating method
+    private void saveRating(String recipeId, float rating) {
+        String userId = mAuth.getCurrentUser().getUid();
+        ratingsRef.child(recipeId).child(userId).setValue(rating).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(DescriptionActivity.this, "Rating saved!", Toast.LENGTH_SHORT).show();
+                ratingBar.setIsIndicator(true); // Lock the RatingBar after rating
+                fetchAverageRating(recipeId);  // Refresh the average rating after saving a new rating
+            } else {
+                Toast.makeText(DescriptionActivity.this, "Failed to save rating.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Fetch user rating
+    private void fetchUserRating(String recipeId) {
+        String userId = mAuth.getCurrentUser().getUid();
+        ratingsRef.child(recipeId).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Float userRating = snapshot.getValue(Float.class);
+                    if (userRating != null) {
+                        ratingBar.setRating(userRating); // Set the user's previous rating
+                        ratingBar.setIsIndicator(true); // Lock the RatingBar if the user has rated
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FetchRating", "Error fetching rating: " + error.getMessage());
+            }
+        });
+    }
+
+    // Fetch average rating for the recipe
+    private void fetchAverageRating(String recipeId) {
+        ratingsRef.child(recipeId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                float totalRating = 0;
+                int ratingCount = 0;
+
+                for (DataSnapshot ratingSnapshot : snapshot.getChildren()) {
+                    Float rating = ratingSnapshot.getValue(Float.class);
+                    if (rating != null) {
+                        totalRating += rating;
+                        ratingCount++;
+                    }
+                }
+
+                if (ratingCount > 0) {
+                    float averageRating = totalRating / ratingCount;
+                    scoreTxt.setText(String.valueOf(averageRating));
+                } else {
+                    scoreTxt.setText("0.0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("AverageRating", "Error fetching average rating: " + error.getMessage());
             }
         });
     }

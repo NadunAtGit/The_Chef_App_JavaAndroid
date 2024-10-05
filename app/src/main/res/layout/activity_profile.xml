@@ -61,9 +61,9 @@
         android:id="@+id/imageView14"
         android:layout_width="56dp"
         android:layout_height="52dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toStartOf="@+id/email"
-        app:layout_constraintHorizontal_bias="0.475"
+        app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView9"
         app:srcCompat="@drawable/email1" />
@@ -76,7 +76,7 @@
         android:layout_marginEnd="40dp"
         android:gravity="center_vertical"
         android:text="TextView"
-        android:textSize="20sp"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
@@ -95,12 +95,13 @@
         android:id="@+id/logout"
         android:layout_width="49dp"
         android:layout_height="56dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintHorizontal_bias="0.889"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/logout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

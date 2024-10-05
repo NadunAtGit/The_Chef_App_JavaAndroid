@@ -7,14 +7,17 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.thechef.Domain.RecipeDomain;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,10 +37,11 @@ import java.util.Map;
 public class AddRecipe extends AppCompatActivity {
 
     private EditText foodNameField, descriptionField, Time, Steps, ingredientsField;
+    private TextView uploadStatus;
     private Button submitButton, addImageButton, addVideoButton;
     private Spinner categorySpinner;
     private ProgressBar progressBar2; // Add progress bar
-
+    private ImageView uploadImg;
     private FirebaseDatabase database;
     private DatabaseReference recipeRef;
     private FirebaseStorage storage;
@@ -44,6 +50,10 @@ public class AddRecipe extends AppCompatActivity {
     private Uri videoUri = null;
 
     private FirebaseAuth mAuth;
+
+
+
+    // Inside the AddRecipe class
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,8 @@ public class AddRecipe extends AppCompatActivity {
 
         // Initialize views
         foodNameField = findViewById(R.id.editName);
+        uploadStatus = findViewById(R.id.uploadStatus);
+        uploadImg = findViewById(R.id.uploadImg);
         Steps = findViewById(R.id.editSteps);
         descriptionField = findViewById(R.id.editDescription);
         ingredientsField = findViewById(R.id.editIngredients);
@@ -78,10 +90,16 @@ public class AddRecipe extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         imageUri = result.getData().getData();
                         Toast.makeText(AddRecipe.this, "Image selected!", Toast.LENGTH_SHORT).show();
+
+                        // Load the selected image into the ImageView
+                        Glide.with(this)
+                                .load(imageUri)
+                                .into(uploadImg);
                     }
                 }
         );
 
+        // Video picker launcher
         ActivityResultLauncher<Intent> videoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -92,7 +110,6 @@ public class AddRecipe extends AppCompatActivity {
                 }
         );
 
-
         // Handle image selection
         addImageButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -102,9 +119,8 @@ public class AddRecipe extends AppCompatActivity {
         addVideoButton = findViewById(R.id.uploadVideoButton);
         addVideoButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            videoPickerLauncher.launch(intent);
+            videoPickerLauncher.launch(intent); // Use the defined video launcher
         });
-
 
         // Handle the submit button
         submitButton.setOnClickListener(v -> {
@@ -119,8 +135,9 @@ public class AddRecipe extends AppCompatActivity {
                 }
             }
         });
-
     }
+
+
 
 
 
@@ -154,7 +171,16 @@ public class AddRecipe extends AppCompatActivity {
         }
         return true; // All validations passed
     }
-
+    private void clearFields() {
+        foodNameField.setText("");
+        descriptionField.setText("");
+        ingredientsField.setText("");
+        Time.setText("");
+        Steps.setText("");
+        uploadImg.setImageResource(0); // or set to a placeholder image
+        uploadStatus.setText(""); // Optional: Reset upload status
+        categorySpinner.setSelection(0); // Reset spinner to default selection
+    }
 
     private void uploadImageToFirebase(Uri uri) {
         String fileName = foodNameField.getText().toString().trim().replaceAll("\\s+", "_") + "_" + System.currentTimeMillis() + ".jpg";
@@ -239,6 +265,7 @@ public class AddRecipe extends AppCompatActivity {
                         .addOnSuccessListener(aVoid -> {
                             progressBar2.setVisibility(View.GONE);
                             Toast.makeText(AddRecipe.this, "Recipe uploaded successfully!", Toast.LENGTH_SHORT).show();
+                            clearFields();
                         })
                         .addOnFailureListener(e -> {
                             progressBar2.setVisibility(View.GONE);

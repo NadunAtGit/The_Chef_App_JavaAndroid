@@ -106,16 +106,24 @@ public class updateProfile extends AppCompatActivity {
     }
 
     @Override
+
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
-            updateImage.setImageURI(imageUri); // Show the selected image
+
+            // Show the selected image in both ImageViews
+            profilePic.setImageURI(imageUri); // Show the selected image in updateImage
+            Glide.with(this)
+                    .load(imageUri) // Use Glide to load image into profilePic
+                    .circleCrop()
+                    .into(profilePic); // Show the selected image in profilePic
         } else {
             Toast.makeText(this, "Image selection failed.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void updateUserProfile(String email) {
         // Validate password fields

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/curve_rect"
+    tools:context=".DessertActivity">
+
+    <!-- FrameLayout to overlay ImageView and White Mask -->
+    <FrameLayout
+        android:id="@+id/imageFrame"
+        android:layout_width="408dp"
+        android:layout_height="264dp"
+        app:layout_constraintBottom_toTopOf="@+id/recycleDessert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <!-- ImageView with Rounded Corners -->
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clipToOutline="true"
+            android:outlineProvider="background"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/dessert" />
+
+        <!-- White Mask with reduced opacity over the image -->
+        <View
+            android:id="@+id/whiteMask"
+            android:layout_width="wrap_content"
+            android:layout_height="293dp"
+            android:alpha="0.3"
+            android:background="@color/white" />
+
+        <!-- TextView overlayed on top of the image and white mask -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Dessert Collection"
+            android:textColor="@color/gray"
+            android:textSize="48sp" />
+
+    </FrameLayout>
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleDessert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="248dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

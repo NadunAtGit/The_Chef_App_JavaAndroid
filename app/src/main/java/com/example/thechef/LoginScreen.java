@@ -26,6 +26,7 @@ public class LoginScreen extends AppCompatActivity {
     EditText password, email;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
+    TextView forgotPW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class LoginScreen extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
+        forgotPW=findViewById(R.id.forgotPW);
 
         // Initially hide the progress bar
         progressBar.setVisibility(View.GONE);
@@ -57,6 +59,13 @@ public class LoginScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginScreen.this, RegisterScreen.class));
+            }
+        });
+
+        forgotPW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginScreen.this, ForgotPassword.class));
             }
         });
 
