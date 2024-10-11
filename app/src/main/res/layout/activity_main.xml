@@ -155,11 +155,12 @@
 
                             <ImageView
                                 android:id="@+id/btn1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
                                 android:layout_margin="10dp"
+                                android:layout_marginTop="16dp"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.621"
+                                app:layout_constraintHorizontal_bias="0.481"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:srcCompat="@drawable/btn_1" />
@@ -187,14 +188,14 @@
 
                             <ImageView
                                 android:id="@+id/btn2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="57dp"
+                                android:layout_height="57dp"
                                 android:layout_margin="10dp"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.621"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/btn_2" />
+                                app:srcCompat="@drawable/maindish2" />
 
                             <TextView
                                 android:id="@+id/text2"
@@ -219,14 +220,14 @@
 
                             <ImageView
                                 android:id="@+id/btn3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="57dp"
+                                android:layout_height="57dp"
                                 android:layout_margin="10dp"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.466"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/btn_3" />
+                                app:srcCompat="@drawable/salad" />
 
                             <TextView
                                 android:id="@+id/text3"
@@ -251,14 +252,14 @@
 
                             <ImageView
                                 android:id="@+id/btn4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="57dp"
+                                android:layout_height="57dp"
                                 android:layout_margin="10dp"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.621"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/btn_7" />
+                                app:srcCompat="@drawable/soup" />
 
                             <TextView
                                 android:id="@+id/text4"
@@ -293,14 +294,14 @@
 
                         <ImageView
                             android:id="@+id/btn5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="57dp"
+                            android:layout_height="57dp"
                             android:layout_margin="10dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.621"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/btn_4" />
+                            app:srcCompat="@drawable/cocktail" />
 
                         <TextView
                             android:id="@+id/text5"
@@ -325,14 +326,14 @@
 
                         <ImageView
                             android:id="@+id/btn6"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="57dp"
+                            android:layout_height="57dp"
                             android:layout_margin="10dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.621"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/btn_6" />
+                            app:srcCompat="@drawable/cupcake" />
 
                         <TextView
                             android:id="@+id/text6"
@@ -357,14 +358,14 @@
 
                         <ImageView
                             android:id="@+id/btn7"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="57dp"
+                            android:layout_height="57dp"
                             android:layout_margin="10dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.466"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/btn_5" />
+                            app:srcCompat="@drawable/nachos" />
 
                         <TextView
                             android:id="@+id/text7"
@@ -389,14 +390,14 @@
 
                         <ImageView
                             android:id="@+id/btn8"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="57dp"
+                            android:layout_height="57dp"
                             android:layout_margin="10dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.621"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/btn_1" />
+                            app:srcCompat="@drawable/curry" />
 
                         <TextView
                             android:id="@+id/text8"
@@ -497,7 +498,7 @@
                         android:layout_height="25dp"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        app:srcCompat="@drawable/saved" />
+                        app:srcCompat="@drawable/bookmark" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -531,7 +532,7 @@
                         android:layout_height="40dp"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        app:srcCompat="@drawable/albums" />
+                        app:srcCompat="@drawable/mycollection" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -547,7 +548,7 @@
                         android:layout_height="25dp"
                         android:layout_marginTop="4dp"
                         android:layout_weight="1"
-                        app:srcCompat="@drawable/profilenew" />
+                        app:srcCompat="@drawable/profile_new" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.bottomappbar.BottomAppBar>

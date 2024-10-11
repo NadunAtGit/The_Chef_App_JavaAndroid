@@ -45,17 +45,17 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RecipeDomain currentRecipe = items.get(position);
 
-        // Set title and time
+
         holder.titleTxt.setText(currentRecipe.getFoodName());
         holder.timeTxt.setText(currentRecipe.getTime() + " min");
 
-        // Load image from URL using Glide
+
         Glide.with(holder.itemView.getContext())
                 .load(currentRecipe.getImageUrl())
                 .transform(new GranularRoundedCorners(25, 25, 0, 0))
                 .into(holder.pic);
 
-        // Fetch ratings for the current recipe
+
         DatabaseReference ratingsRef = FirebaseDatabase.getInstance().getReference("Ratings");
         ratingsRef.child(currentRecipe.getRecipeId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -66,22 +66,22 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
                 Log.d("RatingData", "DataSnapshot: " + dataSnapshot.toString());
 
-                // Sum all the scores for the recipe
+
                 for (DataSnapshot userRating : dataSnapshot.getChildren()) {
-                    // Assuming each child under the recipeId is a user ID with a score as its value
+
                     Float score = userRating.getValue(Float.class);
                     if (score != null) {
-                        totalScore += score; // Accumulate the scores
-                        count++; // Count the number of ratings
+                        totalScore += score;
+                        count++;
                     }
                 }
 
-                // Calculate average and update scoreTxt
+
                 if (count > 0) {
                     float averageScore = totalScore / count;
-                    holder.scoreTxt.setText(String.format("%.1f", averageScore)); // Show average rating
+                    holder.scoreTxt.setText(String.format("%.1f", averageScore));
                 } else {
-                    holder.scoreTxt.setText("No rating yet"); // Default text if no rating
+                    holder.scoreTxt.setText("No rating yet");
                 }
             }
 
