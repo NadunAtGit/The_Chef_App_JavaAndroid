@@ -24,11 +24,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
+//this adapter use to show to rating recipes in home page
 public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHolder> {
+    //list to store all recipes
     private ArrayList<RecipeDomain> items;
     private Context context;
 
+    //constructor method
     public FoodListAdapter(ArrayList<RecipeDomain> items, Context context) {
         this.items = items;
         this.context = context;
@@ -36,31 +38,34 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
     @NonNull
     @Override
+    //by this we get the view for each card from XML layout
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_food_list, parent, false);
         return new ViewHolder(inflate);
     }
 
     @Override
+    //this binds the data to the view in each card
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RecipeDomain currentRecipe = items.get(position);
+        RecipeDomain currentRecipe = items.get(position);//get the current recipe
 
 
-        holder.titleTxt.setText(currentRecipe.getFoodName());
-        holder.timeTxt.setText(currentRecipe.getTime() + " min");
+        holder.titleTxt.setText(currentRecipe.getFoodName());//set recipe name
+        holder.timeTxt.setText(currentRecipe.getTime() + " min");//set cooking time
 
-
+        //load the selected image to image view
         Glide.with(holder.itemView.getContext())
                 .load(currentRecipe.getImageUrl())
                 .transform(new GranularRoundedCorners(25, 25, 0, 0))
                 .into(holder.pic);
 
-
+        //reference to the ratings in Firebase
         DatabaseReference ratingsRef = FirebaseDatabase.getInstance().getReference("Ratings");
+        //check ratings for this recip
         ratingsRef.child(currentRecipe.getRecipeId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Calculate average rating
+                //get rating for each user
                 float totalScore = 0;
                 int count = 0;
 
@@ -71,7 +76,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
                     Float score = userRating.getValue(Float.class);
                     if (score != null) {
-                        totalScore += score;
+                        totalScore += score;//increase scores
                         count++;
                     }
                 }
@@ -79,7 +84,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
                 if (count > 0) {
                     float averageScore = totalScore / count;
-                    holder.scoreTxt.setText(String.format("%.1f", averageScore));
+                    holder.scoreTxt.setText(String.format("%.1f", averageScore));//count how many ratings there ar
                 } else {
                     holder.scoreTxt.setText("No rating yet");
                 }
@@ -91,7 +96,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
             }
         });
 
-        // Handle item clicks for navigating to description
+        //handle item clicks for navigating to description
         holder.itemView.setOnClickListener(view -> {
             int currentPosition = holder.getAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {

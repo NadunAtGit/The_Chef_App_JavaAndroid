@@ -32,12 +32,12 @@ public class DescriptionActivity extends AppCompatActivity {
     private TextView foodNameTxt, foodDescriptionTxt, stepsTxt, scoreTxt;
     private TextView ingredientsContainer;
     private ImageView foodImage, rate;
-    private Button save;
+//    private Button save;
     private ConstraintLayout share;
     private String recipeId;
     private DatabaseReference savedRecipesRef;
     private DatabaseReference ratingsRef;
-    private FloatingActionButton backButton;
+    private FloatingActionButton backButton,save;
     private FirebaseAuth mAuth; // For user authentication
     private ExoPlayer player; // ExoPlayer instance
     private PlayerView playerView; // PlayerView for video playback
@@ -56,7 +56,7 @@ public class DescriptionActivity extends AppCompatActivity {
         scoreTxt = findViewById(R.id.scoreTxt);
         rate = findViewById(R.id.rate);
         share = findViewById(R.id.shareButton);
-        save = findViewById(R.id.save);
+        save = findViewById(R.id.saveButton);
         foodDescriptionTxt = findViewById(R.id.foodDescription);
         stepsTxt = findViewById(R.id.Steps);
         ingredientsContainer = findViewById(R.id.ingredientsContainer);

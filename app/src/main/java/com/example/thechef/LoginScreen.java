@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.common.SignInButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -62,7 +63,7 @@ public class LoginScreen extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView forgotPW;
-    Button google_signup;
+    SignInButton  google_signup;
     FirebaseAuth auth;
     FirebaseDatabase database;
     GoogleSignInClient mGoogleSignInClient;

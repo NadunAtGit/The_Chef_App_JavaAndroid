@@ -5,7 +5,7 @@ public class RatingDomain {
     private float score;
 
     public RatingDomain() {
-        // Default constructor required for calls to DataSnapshot.getValue(RatingDomain.class)
+        //Default constructor required for calls to DataSnapshot.getValue(RatingDomain.class)
     }
 
     public RatingDomain(String recipeId, float score) {

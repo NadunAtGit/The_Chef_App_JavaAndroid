@@ -36,7 +36,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout for each recipe in the search results
+        //inflate the item layout for each recipe in the search results
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe_card, parent, false);
         return new ViewHolder(view);
     }
@@ -45,16 +45,16 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RecipeDomain recipe = recipeList.get(position);
 
-        // Load image using Glide
+        //load image using Glide
         Glide.with(context)
-                .load(recipe.getImageUrl()) // Load the recipe image
+                .load(recipe.getImageUrl()) //load the recipe image
                 .into(holder.imageRecipe);
 
-        // Set recipe details
+        //set recipe details
         holder.textRecipeName.setText(recipe.getFoodName());
         holder.textTime.setText(recipe.getTime() + " min");
 
-        // Fetch and display the average score from the Ratings table
+        //fetch and display the average score from the Ratings table
         DatabaseReference ratingsRef = FirebaseDatabase.getInstance().getReference("Ratings");
         ratingsRef.child(recipe.getRecipeId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -67,20 +67,20 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
                 // Sum all the scores for the recipe
                 for (DataSnapshot userRating : dataSnapshot.getChildren()) {
-                    // Assuming each child under the recipeId is a user ID with a score as its value
+                    //assuming each child under the recipeId is a user ID with a score as its value
                     Float score = userRating.getValue(Float.class);
                     if (score != null) {
-                        totalScore += score; // Accumulate the scores
-                        count++; // Count the number of ratings
+                        totalScore += score; //accumulate the scores
+                        count++; //count the number of ratings
                     }
                 }
 
-                // Calculate average and update textDescription
+                //calculate average and update textDescription
                 if (count > 0) {
                     float averageScore = totalScore / count;
-                    holder.textDescription.setText(String.format("%.1f", averageScore)); // Show average rating
+                    holder.textDescription.setText(String.format("%.1f", averageScore)); //show average rating
                 } else {
-                    holder.textDescription.setText("No rating yet"); // Default text if no rating
+                    holder.textDescription.setText("No rating yet"); //default text if no rating
                 }
             }
 
@@ -90,30 +90,30 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             }
         });
 
-        // Set click listener to navigate to DescriptionActivity when item is clicked
+        //set onclick listener to navigate to DescriptionActivity when item is clicked
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DescriptionActivity.class);
-            intent.putExtra("recipeId", recipe.getRecipeId()); // Pass the recipe ID to the next activity
+            intent.putExtra("recipeId", recipe.getRecipeId()); //pass the recipe ID to the next activity
             context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return recipeList.size(); // Return the number of items in the list
+        return recipeList.size(); //return the number of items in the list
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageRecipe; // ImageView for recipe image
-        TextView textRecipeName; // TextView for recipe name
-        TextView textDescription; // TextView for recipe score (average rating)
-        TextView textTime; // TextView for preparation time
+        ImageView imageRecipe;
+        TextView textRecipeName;
+        TextView textDescription;
+        TextView textTime; //textView for preparation time
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageRecipe = itemView.findViewById(R.id.imageRecipe);
             textRecipeName = itemView.findViewById(R.id.textRecipeName);
-            textDescription = itemView.findViewById(R.id.textScore); // Ensure this ID matches your layout
+            textDescription = itemView.findViewById(R.id.textScore); //ensure this ID matches your layout
             textTime = itemView.findViewById(R.id.textTime);
         }
     }

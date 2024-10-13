@@ -24,7 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 public class profileActivity extends AppCompatActivity {
 
     private TextView username, email;
-    private ImageView profilepic, logout;
+    private ImageView profilepic;
+    private Button logout;
     private Button updateProfile;
     private FirebaseAuth auth;
     private FirebaseDatabase database;

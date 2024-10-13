@@ -10,13 +10,13 @@ public class RecipeDomain implements Serializable {
     private String videoUrl;
     private String time;
     private Double score;
-    private int ratingCount; // Added field to store the number of ratings
-    private String ingredients; // Changed from Map<String, String> to String
-    private String steps; // Changed from List<String> to String
-    private String category; // New attribute for category
-    private String userId; // New attribute for user ID
+    private int ratingCount; //added field to store the number of ratings
+    private String ingredients; //changed from Map<String, String> to String
+    private String steps; //changed from List<String> to String
+    private String category; //new attribute for category
+    private String userId; //new attribute for user ID
 
-    // Updated constructor to include the new userId attribute
+    //updated constructor to include the new userId attribute
     public RecipeDomain(String recipeId, String foodName, String description, String imageUrl,String videoUrl, String time, Double score, int ratingCount, String ingredients, String steps, String category, String userId) {
         this.recipeId = recipeId;
         this.foodName = foodName;
@@ -27,10 +27,10 @@ public class RecipeDomain implements Serializable {
 
         this.score = score;
         this.ratingCount = ratingCount;
-        this.ingredients = ingredients; // Initialize ingredients as a single string
+        this.ingredients = ingredients; //initialize ingredients as a single string
         this.steps = steps;
-        this.category = category; // Initialize category
-        this.userId = userId; // Initialize user ID
+        this.category = category; //initialize category
+        this.userId = userId; //initialize user ID
     }
 
     // Getters and Setters

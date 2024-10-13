@@ -13,7 +13,7 @@
         android:id="@+id/imageFrame"
         android:layout_width="408dp"
         android:layout_height="264dp"
-        app:layout_constraintBottom_toTopOf="@+id/recycleDrinks"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
@@ -34,8 +34,8 @@
         <!-- TextView overlayed on top of the image and white mask -->
         <View
             android:id="@+id/whiteMask"
-            android:layout_width="wrap_content"
-            android:layout_height="293dp"
+            android:layout_width="match_parent"
+            android:layout_height="254dp"
             android:alpha="0.3"
             android:background="@color/black" />
 
@@ -53,14 +53,14 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleDrinks"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="24dp"
         android:paddingTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
+        app:layout_constraintTop_toBottomOf="@+id/imageFrame" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+

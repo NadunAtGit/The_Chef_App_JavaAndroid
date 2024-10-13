@@ -33,14 +33,14 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
+//created to add recipe in to firebase
 public class AddRecipe extends AppCompatActivity {
 
     private EditText foodNameField, descriptionField, Time, Steps, ingredientsField;
     private TextView uploadStatus;
     private Button submitButton, addImageButton, addVideoButton;
     private Spinner categorySpinner;
-    private ProgressBar progressBar2; // Add progress bar
+    private ProgressBar progressBar2;
     private ImageView uploadImg;
     private FirebaseDatabase database;
     private DatabaseReference recipeRef;
@@ -53,21 +53,21 @@ public class AddRecipe extends AppCompatActivity {
 
 
 
-    // Inside the AddRecipe class
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
 
-        // Initialize Firebase database and storage
+        //initialize firebase database and storage
         database = FirebaseDatabase.getInstance();
         recipeRef = database.getReference("recipes");
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize views
+        //initialize views
         foodNameField = findViewById(R.id.editName);
         uploadStatus = findViewById(R.id.uploadStatus);
         uploadImg = findViewById(R.id.uploadImg);
@@ -80,10 +80,10 @@ public class AddRecipe extends AppCompatActivity {
         categorySpinner = findViewById(R.id.categorySpinner);
         progressBar2 = findViewById(R.id.progressBar2); // Find the progress bar by ID
 
-        // Hide progress bar initially
+        //hide progress bar initially
         progressBar2.setVisibility(View.GONE);
 
-        // Image picker launcher
+        //image picker launcher
         ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -91,7 +91,7 @@ public class AddRecipe extends AppCompatActivity {
                         imageUri = result.getData().getData();
                         Toast.makeText(AddRecipe.this, "Image selected!", Toast.LENGTH_SHORT).show();
 
-                        // Load the selected image into the ImageView
+                        //load the selected image into the imageView
                         Glide.with(this)
                                 .load(imageUri)
                                 .into(uploadImg);
@@ -99,7 +99,7 @@ public class AddRecipe extends AppCompatActivity {
                 }
         );
 
-        // Video picker launcher
+        //video picker launcher
         ActivityResultLauncher<Intent> videoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -119,17 +119,17 @@ public class AddRecipe extends AppCompatActivity {
         addVideoButton = findViewById(R.id.uploadVideoButton);
         addVideoButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-            videoPickerLauncher.launch(intent); // Use the defined video launcher
+            videoPickerLauncher.launch(intent); //use the defined video launcher
         });
 
-        // Handle the submit button
+        //handle the submit button
         submitButton.setOnClickListener(v -> {
-            // Validate the fields before uploading
+            //validate the fields before uploading
             if (isInputValid()) {
                 if (imageUri != null && videoUri != null) {
-                    // Show progress bar when upload starts
+                    //show progress bar when upload starts
                     progressBar2.setVisibility(View.VISIBLE);
-                    uploadImageToFirebase(imageUri);  // This will trigger video upload after the image upload succeeds
+                    uploadImageToFirebase(imageUri);  //this will trigger video upload after the image upload succeeds
                 } else {
                     Toast.makeText(this, "Please select both image and video.", Toast.LENGTH_SHORT).show();
                 }
@@ -254,7 +254,7 @@ public class AddRecipe extends AppCompatActivity {
                 recipeMap.put("time", recipe.getTime());
                 recipeMap.put("score", recipe.getScore());
                 recipeMap.put("imageUrl", imageUrl);
-                recipeMap.put("videoUrl", videoUrl);  // Add video URL to the map
+                recipeMap.put("videoUrl", videoUrl);  //add video URL to the map
                 recipeMap.put("steps", steps);
                 recipeMap.put("RatingCount", ratingCount);
                 recipeMap.put("ingredients", ingredients);
